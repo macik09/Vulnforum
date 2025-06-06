@@ -1,0 +1,69 @@
+# --- Python / Flask ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.sqlite3
+*.db
+*.egg-info/
+.env
+venv/
+.env/
+pip-log.txt
+pip-delete-this-directory.txt
+instance/
+*.egg
+*.manifest
+*.spec
+
+# Flask / Werkzeug cache files
+*.pyc
+*.pyo
+*.pyd
+*.log
+
+# --- Android / Kotlin ---
+# Gradle build folders
+.gradle/
+build/
+captures/
+.externalNativeBuild/
+
+# Android Studio
+.idea/
+*.iml
+*.hprof
+
+# Kotlin
+*.class
+*.dex
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Ignore generated files
+app/build/
+*/build/
+
+# --- Docker ---
+# Ignore Docker image and container files (usually no need, but just in case)
+docker-compose.override.yml
+*.log
+
+# Ignore Docker secrets, env files
+.env
+
+# --- System files ---
+.DS_Store
+Thumbs.db
+
+# --- Others ---
+*.hprof
+*.log
+
+# Ignore binary and build output folders
+bin/
+out/
+flat/
+
+

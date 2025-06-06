@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "sender": "user1",
+    "recipient": "admin",
+    "content": "Cze\u015b\u0107! Czy mog\u0119 dosta\u0107 pomoc?",
+    "timestamp": "2025-06-04T12:00:00Z"
+  },
+  {
+    "id": 2,
+    "sender": "admin",
+    "recipient": "user1",
+    "content": "Oczywi\u015bcie, w czym problem?",
+    "timestamp": "2025-06-04T12:05:00Z"
+  },
+  {
+    "id": 3,
+    "sender": "ja",
+    "recipient": "ty",
+    "content": "waesddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "timestamp": "2025-06-05T08:30:07.534790"
+  }
+]
