@@ -27,6 +27,7 @@ fun LoginScreen(navController: NavController) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -59,7 +60,11 @@ fun LoginScreen(navController: NavController) {
                         response: Response<LoginResponse>
                     ) {
                         if (response.isSuccessful) {
-                            sessionManager.saveToken(response.body()?.token ?: "")
+                            val body = response.body()
+                            val token = body?.token ?: return
+                            val role = body.role
+                            var balance = body.balance
+                            sessionManager.saveSession(token, username, role, balance)
                             navController.navigate("home")
                         } else {
                             Toast.makeText(context, "Błędne dane logowania", Toast.LENGTH_SHORT).show()

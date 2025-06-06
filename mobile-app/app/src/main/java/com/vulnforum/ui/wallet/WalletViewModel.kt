@@ -3,12 +3,14 @@ package com.vulnforum.ui.wallet
 import androidx.lifecycle.ViewModel
 import com.vulnforum.data.Article
 import com.vulnforum.data.Wallet
+import com.vulnforum.util.SessionManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class WalletViewModel : ViewModel() {
 
-    private val _wallet = MutableStateFlow(Wallet(balance = 5)) // domyślnie 5 vulndolców
+
+    private val _wallet = MutableStateFlow(Wallet(balance = 5f)) // domyślnie 5 vulndolców
     val wallet: StateFlow<Wallet> = _wallet
 
     private val _articles = MutableStateFlow(

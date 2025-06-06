@@ -13,6 +13,7 @@ def login():
     for user in users:
         if user["username"] == data["username"] and user["password"] == data["password"]:
             token = generate_token(user)
-            return jsonify({"token": token, "role": user["role"]})
+            return jsonify({"token": token, "role": user["role"], "username": user["username"]})
+
     
     return jsonify({"message": "Invalid credentials"}), 401

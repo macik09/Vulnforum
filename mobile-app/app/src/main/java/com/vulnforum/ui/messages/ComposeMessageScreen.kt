@@ -6,9 +6,11 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.vulnforum.util.SessionManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -21,6 +23,9 @@ fun ComposeMessageScreen(
     var sender by remember { mutableStateOf("") }
     var recipient by remember { mutableStateOf("") }
     var content by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val sessionManager = SessionManager(context)
+    val username = sessionManager.getUsername()
 
     Scaffold(
         topBar = {
@@ -41,12 +46,7 @@ fun ComposeMessageScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            OutlinedTextField(
-                value = sender,
-                onValueChange = { sender = it },
-                label = { Text("Nadawca") },
-                singleLine = true
-            )
+
             OutlinedTextField(
                 value = recipient,
                 onValueChange = { recipient = it },
@@ -63,9 +63,9 @@ fun ComposeMessageScreen(
 
             Button(
                 onClick = {
-                    viewModel.sendMessage(sender, recipient, content)
+                    viewModel.sendMessage(username.toString(), recipient, content)
                 },
-                enabled = sender.isNotBlank() && recipient.isNotBlank() && content.isNotBlank()
+                enabled = recipient.isNotBlank() && content.isNotBlank()
             ) {
                 Text("Wyślij")
             }

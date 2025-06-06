@@ -20,13 +20,13 @@ import androidx.navigation.NavController
 @Composable
 fun HomeScreen(
     navController: NavController,
-   // ,username: String,
+    username: String,
     onLogout: () -> Unit,
 ) {
     Scaffold(
         topBar = {
             SmallTopAppBar(
-                title = { Text("Witaj username w aplikacji VulnForum") },
+                title = { Text("Witaj $username w aplikacji VulnForum") },
                 actions = {
                     IconButton(onClick = onLogout) {
                         Icon(Icons.Filled.ExitToApp, contentDescription = "Wyloguj")
@@ -66,8 +66,7 @@ fun HomeScreen(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // Możesz tu dodać panel doładowania portfela lub aktualny stan
-                WalletBalancePanel(navController)
+
             }
         }
     )
@@ -90,24 +89,4 @@ fun LargeIconButton(text: String, icon: androidx.compose.ui.graphics.vector.Imag
     }
 }
 
-@Composable
-fun WalletBalancePanel(navController: NavController) {
-    // Tutaj możesz pokazać np. aktualny stan środków i button do doładowania
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text("Twoje środki: 100 VulnDolce", style = MaterialTheme.typography.bodyLarge)
-            Button(onClick = { navController.navigate("wallet") }) {
-                Text("Doładuj portfel")
-            }
-        }
-    }
-}
+

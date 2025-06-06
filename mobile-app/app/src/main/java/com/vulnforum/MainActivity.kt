@@ -3,6 +3,8 @@ package com.vulnforum
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.*
 import com.vulnforum.ui.forum.ArticleDetailScreen
 import com.vulnforum.ui.forum.ForumScreen
@@ -14,19 +16,23 @@ import com.vulnforum.ui.screens.HomeScreen
 import com.vulnforum.ui.screens.LogoutScreen
 import com.vulnforum.ui.screens.MessagesScreen
 import com.vulnforum.ui.screens.WalletScreen
+import com.vulnforum.util.SessionManager
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             val navController = rememberNavController()
 
             NavHost(navController, startDestination = "login") {
                 composable("login") { LoginScreen(navController) }
                 composable("home") {
+                    val context = LocalContext.current
+                    val sessionManager = remember { SessionManager(context) }
                     HomeScreen(
                         navController = navController,
-                       // username = "JanKowalski",  // możesz dynamicznie podać nazwę użytkownika
+                        username = sessionManager.getUsername().toString(), // możesz dynamicznie podać nazwę użytkownika
                         onLogout = {
                             // tutaj logika wylogowania, np. czyszczenie sesji i powrót do loginu:
                             navController.navigate("login") {
@@ -60,7 +66,12 @@ class MainActivity : ComponentActivity() {
                 }
                 composable("challenges") { ChallengesScreen(navController) }
 
-                composable("logout") { LogoutScreen(navController) }
+                composable("logout") { LogoutScreen(navController)
+                    val context = LocalContext.current
+                    val sessionManager = remember { SessionManager(context) }
+                    sessionManager.clear()
+
+                }
             }
         }
     }

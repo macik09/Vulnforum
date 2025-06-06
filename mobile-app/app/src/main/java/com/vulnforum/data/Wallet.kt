@@ -1,6 +1,6 @@
 package com.vulnforum.data
 
 data class Wallet(
-    var balance: Int = 0, // ilość vulndolców
+    var balance: Float = 0f, // ilość vulndolców
     val unlockedArticleIds: MutableSet<Int> = mutableSetOf()
 )

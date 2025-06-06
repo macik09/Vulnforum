@@ -9,11 +9,13 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.vulnforum.data.Message
 import com.vulnforum.ui.messages.MessagesViewModel
+import com.vulnforum.util.SessionManager
 
 @Composable
 fun MessagesScreen(
@@ -22,6 +24,10 @@ fun MessagesScreen(
     onComposeClick: () -> Unit
 ) {
     val messages by messagesViewModel.messages.collectAsState()
+    val context = LocalContext.current
+    val sessionManager = SessionManager(context)
+    val username = sessionManager.getUsername()
+
 
     var expandedMessageId by remember { mutableStateOf<Int?>(null) }
 
@@ -37,12 +43,13 @@ fun MessagesScreen(
         },
         floatingActionButtonPosition = FabPosition.Start
     ) { paddingValues ->
+        val filteredMessages = messages.filter { it.sender == username || it.recipient == username }
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = paddingValues
         ) {
-            items(messages) { message ->
+            items(filteredMessages) { message ->
                 MessageItem(
                     message = message,
                     expanded = expandedMessageId == message.id,
