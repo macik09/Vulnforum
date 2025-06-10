@@ -10,19 +10,28 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.vulnforum.network.ApiClient
+import com.vulnforum.network.WalletService
 import com.vulnforum.ui.wallet.WalletViewModel
+import com.vulnforum.ui.wallet.WalletViewModelFactory
 import com.vulnforum.util.SessionManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-
-
-fun WalletScreen(navController: NavController, walletViewModel: WalletViewModel = viewModel()) {
-    val wallet by walletViewModel.wallet.collectAsState()
+fun WalletScreen(
+    navController: NavController,
+    walletViewModel: WalletViewModel = viewModel(
+        factory = WalletViewModelFactory(
+            // Musisz dostarczyć WalletService do ViewModelFactory
+            ApiClient.getClient(LocalContext.current).create(WalletService::class.java)
+        )
+    )
+) {
+    val balance by walletViewModel.balance.collectAsState() // Obserwuj StateFlow z ViewModelu
     val context = LocalContext.current
     val sessionManager = SessionManager(context)
-    val username = sessionManager.getUsername()
-    val balance = sessionManager.getBalance()
+    val username = sessionManager.getUsername() // Username może być wciąż z SessionManager
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -42,13 +51,13 @@ fun WalletScreen(navController: NavController, walletViewModel: WalletViewModel 
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text("Saldo: $balance vulndolców", style = MaterialTheme.typography.titleLarge)
+            // Wyświetl saldo, obsłuż przypadek gdy jest jeszcze null
+            Text("Saldo: ${balance ?: "Ładowanie..."} vulndolców", style = MaterialTheme.typography.titleLarge)
 
             Button(onClick = {
-                // Tutaj podłączysz API płatności (np. dialog z wyborem kwoty itp.)
-                walletViewModel.purchaseVulndolcs(5)
+                walletViewModel.addFunds(5f) // Wywołaj funkcję dodawania środków w ViewModelu
             }) {
-                Text("Kup 5 vulndolców (demo)")
+                Text("Kup 5 vulndolców")
             }
         }
     }

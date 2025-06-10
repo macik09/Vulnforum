@@ -1,51 +1,62 @@
 from flask import Blueprint, request, jsonify
-import json
-import os
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
+from app.models.models import db, Message, User
 
 messages_bp = Blueprint('messages', __name__, url_prefix='/api/messages')
 
-# Lokalizacja przykładowej bazy wiadomości
-MESSAGES_FILE = os.path.join(os.path.dirname(__file__), '../models/messages.json')
-
-# Funkcja pomocnicza – wczytuje wiadomości z pliku
-def load_messages():
-    if not os.path.exists(MESSAGES_FILE):
-        return []
-    with open(MESSAGES_FILE, 'r') as f:
-        return json.load(f)
-
-# Funkcja pomocnicza – zapisuje wiadomości
-def save_messages(messages):
-    with open(MESSAGES_FILE, 'w') as f:
-        json.dump(messages, f, indent=2)
-
-# Pobierz wszystkie wiadomości (dla testów – w realnej aplikacji wymagałoby autoryzacji)
+# Pobierz wszystkie wiadomości aktualnie zalogowanego użytkownika
 @messages_bp.route('/', methods=['GET'])
+@jwt_required()
 def get_messages():
-    messages = load_messages()
-    return jsonify(messages)
+    user_id = get_jwt_identity()
+
+    messages = Message.query.filter(
+        (Message.sender_id == user_id) | (Message.receiver_id == user_id)
+    ).order_by(Message.timestamp.desc()).all()
+
+    return jsonify([
+        {
+            "id": m.id,
+            "sender": User.query.get(m.sender_id).username,
+            "recipient": User.query.get(m.receiver_id).username,
+            "content": m.content,
+            "timestamp": m.timestamp.isoformat()
+        } for m in messages
+    ])
 
 # Wyślij wiadomość
 @messages_bp.route('/', methods=['POST'])
+@jwt_required()
 def send_message():
-    data = request.json
-    required = ['sender', 'recipient', 'content']
+    user_id = get_jwt_identity()
+    data = request.get_json()
+    recipient_username = data.get("recipient")
+    content = data.get("content")
 
-    if not all(key in data for key in required):
-        return jsonify({"error": "Missing fields"}), 400
+    if not recipient_username or not content:
+        return jsonify({"error": "Missing recipient or content"}), 400
 
-    messages = load_messages()
+    recipient = User.query.filter_by(username=recipient_username).first()
+    if not recipient:
+        return jsonify({"error": "Recipient not found"}), 404
 
-    message = {
-        "id": len(messages) + 1,
-        "sender": data['sender'],
-        "recipient": data['recipient'],
-        "content": data['content'],
-        "timestamp": datetime.utcnow().isoformat()
-    }
+    new_message = Message(
+        sender_id=user_id,
+        receiver_id=recipient.id,
+        content=content,
+        timestamp=datetime.utcnow()
+    )
+    db.session.add(new_message)
+    db.session.commit()
 
-    messages.append(message)
-    save_messages(messages)
-
-    return jsonify({"status": "Message sent", "message": message}), 201
+    return jsonify({
+        "status": "Message sent",
+        "message": {
+            "id": new_message.id,
+            "sender": User.query.get(user_id).username,
+            "recipient": recipient.username,
+            "content": content,
+            "timestamp": new_message.timestamp.isoformat()
+        }
+    }), 201

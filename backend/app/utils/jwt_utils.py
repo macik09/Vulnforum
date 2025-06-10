@@ -5,9 +5,13 @@ SECRET = "supersecretkey"
 
 def generate_token(user):
     payload = {
-        "sub": user["id"],
+        "sub": str(user["id"]),   # <-- tutaj rzutujesz na string
         "username": user["username"],
         "role": user["role"],
         "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=2)
     }
-    return jwt.encode(payload, SECRET, algorithm="HS256")
+    token = jwt.encode(payload, SECRET, algorithm="HS256")
+
+    if isinstance(token, bytes):
+        return token.decode("utf-8")
+    return token

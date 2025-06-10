@@ -14,25 +14,30 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.vulnforum.data.Message
+import com.vulnforum.network.ApiClient
+import com.vulnforum.network.MessageService
 import com.vulnforum.ui.messages.MessagesViewModel
+import com.vulnforum.ui.messages.MessagesViewModelFactory
 import com.vulnforum.util.SessionManager
 
 @Composable
-fun MessagesScreen(
-    navController: NavController,
-    messagesViewModel: MessagesViewModel = viewModel(),
-    onComposeClick: () -> Unit
-) {
-    val messages by messagesViewModel.messages.collectAsState()
+fun MessagesScreen(navController: NavController, onComposeClick: () -> Unit) {
     val context = LocalContext.current
-    val sessionManager = SessionManager(context)
-    val username = sessionManager.getUsername()
+    val sessionManager = remember { SessionManager(context) }
+    val username = sessionManager.getUsername() ?: ""
 
+    val messageService = remember {
+        ApiClient.getClient(context).create(MessageService::class.java)
+    }
+    val factory = remember { MessagesViewModelFactory(messageService) }
+    val viewModel: MessagesViewModel = viewModel(factory = factory)
+
+    val messages by viewModel.messages.collectAsState()
 
     var expandedMessageId by remember { mutableStateOf<Int?>(null) }
 
     LaunchedEffect(Unit) {
-        messagesViewModel.loadMessages()
+        viewModel.loadMessages()
     }
 
     Scaffold(

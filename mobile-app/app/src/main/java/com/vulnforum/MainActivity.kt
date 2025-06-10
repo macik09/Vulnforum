@@ -7,7 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.*
 import com.vulnforum.ui.forum.ArticleDetailScreen
-import com.vulnforum.ui.forum.ForumScreen
+import com.vulnforum.ui.screens.ForumScreen
 import com.vulnforum.ui.forum.PaywallScreen
 import com.vulnforum.ui.messages.ComposeMessageScreen
 import com.vulnforum.ui.screens.ChallengesScreen
@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
 
                 composable("article/{articleId}") { backStackEntry ->
                     val articleId = backStackEntry.arguments?.getString("articleId")?.toInt() ?: 0
-                    ArticleDetailScreen(articleId)
+                    ArticleDetailScreen(articleId, navController) // ← teraz jest OK
                 }
                 composable("challenges") { ChallengesScreen(navController) }
 

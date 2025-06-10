@@ -22,7 +22,7 @@ import retrofit2.Response
 fun LoginScreen(navController: NavController) {
     val context = LocalContext.current
     val sessionManager = remember { SessionManager(context) }
-    val authService = remember { ApiClient.getClient().create(AuthService::class.java) }
+    val authService = remember { ApiClient.getClient(context).create(AuthService::class.java) }
 
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }

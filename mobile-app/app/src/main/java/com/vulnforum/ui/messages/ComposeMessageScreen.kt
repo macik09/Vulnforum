@@ -10,20 +10,29 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.vulnforum.network.ApiClient
+import com.vulnforum.network.MessageService
 import com.vulnforum.util.SessionManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ComposeMessageScreen(
     navController: NavController,
-    viewModel: ComposeMessageViewModel = viewModel()
+
 ) {
+
+    val context = LocalContext.current
+    val messageService = remember {
+        ApiClient.getClient(context).create(MessageService::class.java)
+    }
+    val factory = remember { ComposeMessageViewModelFactory(messageService) }
+    val viewModel: ComposeMessageViewModel = viewModel(factory = factory)
+
     val sendStatus by viewModel.sendStatus.collectAsState()
 
-    var sender by remember { mutableStateOf("") }
     var recipient by remember { mutableStateOf("") }
     var content by remember { mutableStateOf("") }
-    val context = LocalContext.current
+
     val sessionManager = SessionManager(context)
     val username = sessionManager.getUsername()
 

@@ -10,9 +10,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import retrofit2.awaitResponse
 
-class MessagesViewModel : ViewModel() {
+class MessagesViewModel(private val messageService: MessageService) : ViewModel() {
 
-    private val messageService = ApiClient.getClient().create(MessageService::class.java)
 
     private val _messages = MutableStateFlow<List<Message>>(emptyList())
     val messages: StateFlow<List<Message>> = _messages

@@ -7,6 +7,7 @@ data class Article(
     val isPaid: Boolean,
     var isUnlocked: Boolean = false // domyślnie zablokowany jeśli płatny
 )
+/*
 val dummyArticles = listOf(
     Article(
         id = 1,
@@ -27,3 +28,5 @@ val dummyArticles = listOf(
         isPaid = false
     )
 )
+
+ */

@@ -10,9 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import retrofit2.awaitResponse
 
-class ComposeMessageViewModel : ViewModel() {
-
-    private val messageService = ApiClient.getClient().create(MessageService::class.java)
+class ComposeMessageViewModel(private val messageService: MessageService) : ViewModel() {
 
     private val _sendStatus = MutableStateFlow<String?>(null)
     val sendStatus: StateFlow<String?> = _sendStatus
@@ -31,7 +29,7 @@ class ComposeMessageViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     _sendStatus.value = "Wiadomość wysłana!"
                 } else {
-                    _sendStatus.value = "Błąd wysyłania: ${response.code()}"
+                    _sendStatus.value = "Błąd wysyłania"
                 }
             } catch (e: Exception) {
                 _sendStatus.value = "Błąd sieci: ${e.message}"
