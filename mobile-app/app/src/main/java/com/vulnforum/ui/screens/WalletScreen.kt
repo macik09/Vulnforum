@@ -22,7 +22,6 @@ fun WalletScreen(
     navController: NavController,
     walletViewModel: WalletViewModel = viewModel(
         factory = WalletViewModelFactory(
-            // Musisz dostarczyć WalletService do ViewModelFactory
             ApiClient.getClient(LocalContext.current).create(WalletService::class.java)
         )
     )
@@ -51,11 +50,10 @@ fun WalletScreen(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Wyświetl saldo, obsłuż przypadek gdy jest jeszcze null
             Text("Saldo: ${balance ?: "Ładowanie..."} vulndolców", style = MaterialTheme.typography.titleLarge)
 
             Button(onClick = {
-                walletViewModel.addFunds(5f) // Wywołaj funkcję dodawania środków w ViewModelu
+                walletViewModel.addFunds(5f)
             }) {
                 Text("Kup 5 vulndolców")
             }

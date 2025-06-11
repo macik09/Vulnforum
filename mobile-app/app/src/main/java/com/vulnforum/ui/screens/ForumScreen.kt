@@ -22,6 +22,7 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation.NavController
 import com.vulnforum.network.ApiClient
 import com.vulnforum.network.ArticleService
+import com.vulnforum.network.WalletService
 import com.vulnforum.ui.forum.ForumViewModel
 import com.vulnforum.ui.forum.ForumViewModelFactory
 
@@ -30,10 +31,13 @@ fun ForumScreen(navController: NavController) {
     val context = LocalContext.current
     val owner = LocalViewModelStoreOwner.current
 
-    val service = remember {
+    val articleService = remember {
         ApiClient.getClient(context).create(ArticleService::class.java)
     }
-    val factory = remember { ForumViewModelFactory(service) }
+    val walletService = remember {
+        ApiClient.getClient(context).create(WalletService::class.java)
+    }
+    val factory = remember { ForumViewModelFactory(articleService, walletService) }
 
     val viewModel: ForumViewModel = viewModel(
         factory = factory,

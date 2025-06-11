@@ -2,7 +2,7 @@ package com.vulnforum.network
 
 
 import com.vulnforum.data.Article
-import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -12,5 +12,7 @@ interface ArticleService {
     suspend fun getArticles(): List<Article>
 
     @POST("api/articles/unlock/{articleId}")
-   fun unlockArticle(@Path("articleId") articleId: Int): Call<Map<String, Any>>
+    suspend fun unlockArticle(@Path("articleId") articleId: Int): Response<Map<String, Any>>
+
+
 }
