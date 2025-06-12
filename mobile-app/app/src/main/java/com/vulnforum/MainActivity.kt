@@ -10,6 +10,7 @@ import com.vulnforum.ui.forum.ArticleDetailScreen
 import com.vulnforum.ui.screens.ForumScreen
 import com.vulnforum.ui.forum.PaywallScreen
 import com.vulnforum.ui.messages.ComposeMessageScreen
+import com.vulnforum.ui.screens.AdminScreen
 import com.vulnforum.ui.screens.ChallengesScreen
 import com.vulnforum.ui.screens.LoginScreen
 import com.vulnforum.ui.screens.HomeScreen
@@ -42,6 +43,7 @@ class MainActivity : ComponentActivity() {
                     )
                 }
                 composable("forum") { ForumScreen(navController) }
+                composable("admin_panel") { AdminScreen(navController) }
                 composable("wallet") { WalletScreen(navController) }
                 composable("compose_message") { ComposeMessageScreen(navController = navController) }
                 composable("messages") {
@@ -53,7 +55,6 @@ class MainActivity : ComponentActivity() {
                         }
                     )
                 }
-                composable("forum") { ForumScreen(navController) }
 
                 composable("paywall/{articleId}") { backStackEntry ->
                     val articleId = backStackEntry.arguments?.getString("articleId")?.toInt() ?: 0

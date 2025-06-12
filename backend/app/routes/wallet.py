@@ -80,3 +80,4 @@ def purchase_article():
     except Exception as e:
         db.session.rollback()
         return jsonify({"message": f"Wystąpił błąd podczas zakupu: {str(e)}"}), 500
+

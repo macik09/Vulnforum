@@ -26,10 +26,10 @@ fun WalletScreen(
         )
     )
 ) {
-    val balance by walletViewModel.balance.collectAsState() // Obserwuj StateFlow z ViewModelu
+    val balance by walletViewModel.balance.collectAsState()
     val context = LocalContext.current
     val sessionManager = SessionManager(context)
-    val username = sessionManager.getUsername() // Username może być wciąż z SessionManager
+    val username = sessionManager.getUsername()
 
     Scaffold(
         topBar = {

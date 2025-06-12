@@ -23,11 +23,15 @@ def create_app():
     from app.routes.articles import articles_bp
     from app.routes.messages import messages_bp
     from app.routes.wallet import wallet_bp
+    from app.routes.admin import admin_bp
+    
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(articles_bp)
     app.register_blueprint(messages_bp)
     app.register_blueprint(wallet_bp)
+    app.register_blueprint(admin_bp)
+
 
     with app.app_context():
         db.create_all()
