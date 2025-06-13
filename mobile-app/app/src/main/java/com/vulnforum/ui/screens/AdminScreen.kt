@@ -61,7 +61,6 @@ fun AdminScreen(
             try {
                 users = adminService.getAllUsers()
                 articles = articleService.getArticles()
-                // Inicjalizacja stanu płatności artykułów
                 articleStates = articles.associate { it.id to it.isPaid }
             } finally {
                 isLoading = false

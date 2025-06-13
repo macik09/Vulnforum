@@ -1,5 +1,5 @@
 package com.vulnforum.data
 
 data class Wallet(
-    var balance: Float = 0f, // ilość vulndolców
+    var balance: Float = 0f
 )

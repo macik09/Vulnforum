@@ -5,7 +5,7 @@ SECRET = "supersecretkey"
 
 def generate_token(user):
     payload = {
-        "sub": str(user["id"]),   # <-- tutaj rzutujesz na string
+        "sub": str(user["id"]),   
         "username": user["username"],
         "role": user["role"],
         "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=2)

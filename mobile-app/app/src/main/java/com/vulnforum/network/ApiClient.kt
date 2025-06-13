@@ -21,8 +21,6 @@ object ApiClient {
             val client = OkHttpClient.Builder()
                 .addInterceptor { chain ->
                     val requestBuilder = chain.request().newBuilder()
-
-                    // Dodaj JWT token do nagłówka jeśli istnieje
                     sessionManager.getToken()?.let { token ->
                         requestBuilder.addHeader("Authorization", "Bearer $token")
                     }

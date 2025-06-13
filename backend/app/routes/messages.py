@@ -5,7 +5,6 @@ from app.models.models import db, Message, User
 
 messages_bp = Blueprint('messages', __name__, url_prefix='/api/messages')
 
-# Pobierz wszystkie wiadomości aktualnie zalogowanego użytkownika
 @messages_bp.route('/', methods=['GET'])
 @jwt_required()
 def get_messages():
@@ -25,7 +24,6 @@ def get_messages():
         } for m in messages
     ])
 
-# Wyślij wiadomość
 @messages_bp.route('/', methods=['POST'])
 @jwt_required()
 def send_message():

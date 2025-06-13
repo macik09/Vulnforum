@@ -45,7 +45,6 @@ def unlock_article(article_id):
     if not article.is_paid:
         return jsonify({"message": "Artykuł już jest darmowy"})
 
-    # jeśli już odblokowany – nie płacimy ponownie
     already_unlocked = UnlockedArticle.query.filter_by(
         user_id=user_id, article_id=article_id
     ).first()
@@ -55,7 +54,6 @@ def unlock_article(article_id):
     if user.wallet_balance < 5:
         return jsonify({"error": "Za mało vulndolców"}), 403
 
-    # odejmij środki i zapisz odblokowanie
     user.wallet_balance -= 5
     unlock = UnlockedArticle(user_id=user_id, article_id=article_id)
     db.session.add(unlock)
@@ -63,21 +61,4 @@ def unlock_article(article_id):
 
     return jsonify({"message": f"Odblokowano artykuł {article.title}"}), 200
 
-@articles_bp.route('/admin/articles/<int:article_id>', methods=['PATCH'])
-@jwt_required()
 
-def update_article(article_id):
-    article = Article.query.get(article_id)
-    if not article:
-        return jsonify({"error": "Nie znaleziono artykułu"}), 404
-
-    data = request.get_json()
-    is_paid = data.get("is_paid")
-
-    if is_paid is None:
-        return jsonify({"error": "Brak wartości is_paid"}), 400
-
-    article.is_paid = bool(is_paid)
-    db.session.commit()
-
-    return jsonify({"message": "Zaktualizowano artykuł", "is_paid": article.is_paid}), 200

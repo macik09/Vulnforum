@@ -22,10 +22,8 @@ class MessagesViewModel(private val messageService: MessageService) : ViewModel(
                 if (response.isSuccessful) {
                     _messages.value = response.body() ?: emptyList()
                 } else {
-                    // Obsługa błędu np. logowanie lub toast
                 }
             } catch (e: Exception) {
-                // Obsługa wyjątku
             }
         }
     }

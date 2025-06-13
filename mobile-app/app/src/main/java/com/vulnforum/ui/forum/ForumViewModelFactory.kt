@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.vulnforum.network.ArticleService
 import com.vulnforum.network.WalletService
-import com.vulnforum.ui.forum.ForumViewModel
 
 
 class ForumViewModelFactory(

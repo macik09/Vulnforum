@@ -14,7 +14,6 @@ def login():
     user = User.query.filter_by(username=username, password=password).first()
 
     if user:
-        # Tworzymy token używając flask_jwt_extended
         access_token = create_access_token(identity=str(user.id), additional_claims={
             "username": user.username,
             "role": user.role
@@ -29,7 +28,7 @@ def register():
     data = request.get_json()
     new_user = User(
         username=data["username"],
-        password=data["password"],  # najlepiej hashować!
+        password=data["password"],  
         role="user",
         wallet_balance=5.0
     )

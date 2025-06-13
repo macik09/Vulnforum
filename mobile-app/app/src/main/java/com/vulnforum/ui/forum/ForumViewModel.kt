@@ -1,7 +1,7 @@
 package com.vulnforum.ui.forum
 
 
-import android.util.Log
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +19,7 @@ class ForumViewModel(private val articleService: ArticleService, private val wal
 
 
     private val _articles = MutableStateFlow<List<Article>>(emptyList())
-    val articles: StateFlow<List<Article>> = _articles.asStateFlow() // Lepiej użyć asStateFlow()
+    val articles: StateFlow<List<Article>> = _articles.asStateFlow()
 
 
 

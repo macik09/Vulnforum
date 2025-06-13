@@ -9,24 +9,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.vulnforum.data.LoginRequest
-import com.vulnforum.data.LoginResponse
+import com.vulnforum.data.RegisterRequest
 import com.vulnforum.network.ApiClient
 import com.vulnforum.network.AuthService
-import com.vulnforum.util.SessionManager
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 @Composable
-fun LoginScreen(navController: NavController) {
+fun RegisterScreen(navController: NavController) {
+
     val context = LocalContext.current
-    val sessionManager = remember { SessionManager(context) }
     val authService = remember { ApiClient.getClient(context).create(AuthService::class.java) }
 
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-
 
     Column(
         modifier = Modifier
@@ -46,43 +43,32 @@ fun LoginScreen(navController: NavController) {
             value = password,
             onValueChange = { password = it },
             label = { Text("Hasło") },
-            modifier = Modifier.fillMaxWidth(),
-            visualTransformation = PasswordVisualTransformation()
+            visualTransformation = PasswordVisualTransformation(),
+            modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = {
-                val request = LoginRequest(username, password)
-                authService.login(request).enqueue(object : Callback<LoginResponse> {
-                    override fun onResponse(
-                        call: Call<LoginResponse>,
-                        response: Response<LoginResponse>
-                    ) {
+                val request = RegisterRequest(username, password)
+                authService.register(request).enqueue(object : Callback<Void> {
+                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
                         if (response.isSuccessful) {
-                            val body = response.body()
-                            val token = body?.token ?: return
-                            val role = body.role
-                            var balance = body.balance
-                            sessionManager.saveSession(token, username, role, balance)
-                            navController.navigate("home")
+                            Toast.makeText(context, "Rejestracja zakończona sukcesem", Toast.LENGTH_SHORT).show()
+                            navController.navigate("login")
                         } else {
-                            Toast.makeText(context, "Błędne dane logowania", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Błąd rejestracji", Toast.LENGTH_SHORT).show()
                         }
                     }
 
-                    override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                    override fun onFailure(call: Call<Void>, t: Throwable) {
                         Toast.makeText(context, "Błąd sieci", Toast.LENGTH_SHORT).show()
                     }
                 })
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Zaloguj")
+            Text("Zarejestruj się")
         }
-        TextButton(onClick = { navController.navigate("register") }) {
-            Text("Nie masz konta? Zarejestruj się")
-        }
-
     }
 }

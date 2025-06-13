@@ -31,3 +31,11 @@ class UnlockedArticle(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     article_id = db.Column(db.Integer, db.ForeignKey('article.id'), nullable=False)
+
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.Text, nullable=False)
+    file_path = db.Column(db.String(255), nullable=True)
+    article_id = db.Column(db.Integer, db.ForeignKey('article.id'), nullable=False)
+
+    article = db.relationship('Article', backref=db.backref('comments', lazy=True))

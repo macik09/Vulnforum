@@ -61,7 +61,7 @@ def purchase_article():
     data = request.get_json()
     amount = data.get('amount')
 
-    # Walidacja kwoty
+
     if not amount or not isinstance(amount, (int, float)) or amount <= 0:
         return jsonify({"message": "Nieprawidłowa kwota. Musi być liczbą dodatnią."}), 400
 
@@ -69,9 +69,9 @@ def purchase_article():
         return jsonify({"message": "Niewystarczające środki na koncie."}), 400
 
     try:
-        # Odejmij kwotę z salda portfela użytkownika
+       
         user.wallet_balance -= float(amount)
-        db.session.commit()  # Zapisz zmiany w bazie danych
+        db.session.commit() 
 
         return jsonify({
             "message": f"Zakup za {amount} vulndolców zakończony sukcesem. Nowe saldo: {user.wallet_balance}",

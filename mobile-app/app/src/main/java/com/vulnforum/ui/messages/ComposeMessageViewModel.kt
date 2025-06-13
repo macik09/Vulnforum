@@ -3,7 +3,6 @@ package com.vulnforum.ui.messages
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vulnforum.data.Message
-import com.vulnforum.network.ApiClient
 import com.vulnforum.network.MessageService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +16,7 @@ class ComposeMessageViewModel(private val messageService: MessageService) : View
 
     fun sendMessage(sender: String, recipient: String, content: String) {
         val message = Message(
-            id = 0,  // id może być 0 lub null, backend nada prawidłowe
+            id = 0,  
             sender = sender,
             recipient = recipient,
             content = content,

@@ -11,19 +11,19 @@ def create_app():
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config["JWT_SECRET_KEY"] = "super-secret"  # wymagana konfiguracja JWT
-    app.config["JWT_TOKEN_LOCATION"] = ["headers"]  # domyślnie token w nagłówkach Authorization
+    app.config["JWT_SECRET_KEY"] = "super-secret"  
+    app.config["JWT_TOKEN_LOCATION"] = ["headers"]  
 
     jwt = JWTManager(app)
 
     db.init_app(app)
 
-    # Rejestracja blueprintów
     from app.routes.auth import auth_bp
     from app.routes.articles import articles_bp
     from app.routes.messages import messages_bp
     from app.routes.wallet import wallet_bp
     from app.routes.admin import admin_bp
+    from app.routes.comments import comments_bp
     
 
     app.register_blueprint(auth_bp)
@@ -31,6 +31,7 @@ def create_app():
     app.register_blueprint(messages_bp)
     app.register_blueprint(wallet_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(comments_bp)
 
 
     with app.app_context():

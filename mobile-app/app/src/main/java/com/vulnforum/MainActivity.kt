@@ -16,6 +16,7 @@ import com.vulnforum.ui.screens.LoginScreen
 import com.vulnforum.ui.screens.HomeScreen
 import com.vulnforum.ui.screens.LogoutScreen
 import com.vulnforum.ui.screens.MessagesScreen
+import com.vulnforum.ui.screens.RegisterScreen
 import com.vulnforum.ui.screens.WalletScreen
 import com.vulnforum.util.SessionManager
 
@@ -33,9 +34,9 @@ class MainActivity : ComponentActivity() {
                     val sessionManager = remember { SessionManager(context) }
                     HomeScreen(
                         navController = navController,
-                        username = sessionManager.getUsername().toString(), // możesz dynamicznie podać nazwę użytkownika
+                        username = sessionManager.getUsername().toString(),
                         onLogout = {
-                            // tutaj logika wylogowania, np. czyszczenie sesji i powrót do loginu:
+
                             navController.navigate("login") {
                                 popUpTo("home") { inclusive = true }
                             }
@@ -43,6 +44,7 @@ class MainActivity : ComponentActivity() {
                     )
                 }
                 composable("forum") { ForumScreen(navController) }
+                composable("register") { RegisterScreen(navController) }
                 composable("admin_panel") { AdminScreen(navController) }
                 composable("wallet") { WalletScreen(navController) }
                 composable("compose_message") { ComposeMessageScreen(navController = navController) }
@@ -50,7 +52,7 @@ class MainActivity : ComponentActivity() {
                     MessagesScreen(
                         navController = navController,
                         onComposeClick = {
-                            // Co się dzieje po kliknięciu? Np. nawigacja do ekranu tworzenia nowej wiadomości:
+
                             navController.navigate("compose_message")
                         }
                     )
@@ -63,7 +65,7 @@ class MainActivity : ComponentActivity() {
 
                 composable("article/{articleId}") { backStackEntry ->
                     val articleId = backStackEntry.arguments?.getString("articleId")?.toInt() ?: 0
-                    ArticleDetailScreen(articleId, navController) // ← teraz jest OK
+                    ArticleDetailScreen(articleId, navController)
                 }
                 composable("challenges") { ChallengesScreen(navController) }
 
