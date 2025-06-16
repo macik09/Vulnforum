@@ -77,6 +77,16 @@ fun ArticleDetailScreen(
     var comments by remember { mutableStateOf<List<Comment>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(error) {
+        error?.let {
+            println(">>> Wystąpił błąd: $it") // PATCH: log błędu
+            Toast.makeText(context, "Wystąpił błąd: $it", Toast.LENGTH_LONG).show()
+            error = null
+        }
+    }
+
+
     var commentsExpanded by remember { mutableStateOf(false) }
 
     var commentText by remember { mutableStateOf("") }
@@ -91,7 +101,11 @@ fun ArticleDetailScreen(
         isLoading = true
         try {
             val articles = articleService.getArticles()
+            println(">>> Pobieranie artykułów: ${articles.size}")
             article = articles.find { it.id == articleId }
+            if (article == null) {
+                error = "Nie znaleziono artykułu o ID: $articleId"
+            }
 
             commentService.getCommentsForArticle(articleId)
                 .enqueue(object : Callback<List<Comment>> {
@@ -106,16 +120,19 @@ fun ArticleDetailScreen(
                     }
 
                     override fun onFailure(call: Call<List<Comment>>, t: Throwable) {
+                        println(">>> Błąd pobierania komentarzy: ${t.message}")
                         error = t.message
                         isLoading = false
                     }
                 })
 
         } catch (e: Exception) {
+            println(">>> Wyjątek: ${e.message}")
             error = e.message
             isLoading = false
         }
     }
+
 
     fun refreshComments() {
         isLoading = true
@@ -261,6 +278,8 @@ fun ArticleDetailScreen(
                         }
 
                         Spacer(modifier = Modifier.width(8.dp))
+
+
 
                         Button(
                             onClick = {
