@@ -1,0 +1,51 @@
+{
+  "users": [
+    {"username": "alice", "password": "pass123", "role": "user", "wallet_balance": 100.0},
+    {"username": "bob", "password": "pass456", "role": "admin", "wallet_balance": 250.0},
+    {"username": "john", "password": "johnpass", "role": "user", "wallet_balance": 75.0},
+    {"username": "eve", "password": "evilpass", "role": "user", "wallet_balance": 30.0}
+  ],
+  "articles": [
+    {"title": "Darmowy artykuł", "content": "To jest darmowy artykuł", "is_paid": false},
+    {"title": "Płatny artykuł", "content": "To jest płatny artykuł", "is_paid": true},
+    {"title": "Artykuł 3", "content": "Zawartość artykułu 3", "is_paid": false},
+    {"title": "Artykuł 4", "content": "Zawartość artykułu 4", "is_paid": true},
+    {"title": "Artykuł 5", "content": "Zawartość artykułu 5", "is_paid": false},
+    {"title": "Artykuł 6", "content": "Zawartość artykułu 6", "is_paid": true},
+    {"title": "Artykuł 7", "content": "Zawartość artykułu 7", "is_paid": false},
+    {"title": "Artykuł 8", "content": "Zawartość artykułu 8", "is_paid": true},
+    {"title": "Artykuł 9", "content": "Zawartość artykułu 9", "is_paid": false},
+    {"title": "Artykuł 10", "content": "Zawartość artykułu 10", "is_paid": true},
+    {"title": "Artykuł 11", "content": "Zawartość artykułu 11", "is_paid": false},
+    {"title": "Artykuł 12", "content": "Zawartość artykułu 12", "is_paid": true},
+    {"title": "Artykuł 13", "content": "Zawartość artykułu 13", "is_paid": false},
+    {"title": "Artykuł 14", "content": "Zawartość artykułu 14", "is_paid": true},
+    {"title": "Artykuł 15", "content": "Zawartość artykułu 15", "is_paid": false}
+  ],
+  "unlocked_articles": [
+    {"username": "alice", "article_title": "Płatny artykuł"},
+    {"username": "alice", "article_title": "Artykuł 4"},
+    {"username": "bob", "article_title": "Artykuł 6"},
+    {"username": "john", "article_title": "Artykuł 4"},
+    {"username": "john", "article_title": "Artykuł 8"},
+    {"username": "john", "article_title": "Artykuł 10"},
+    {"username": "eve", "article_title": "Artykuł 6"},
+    {"username": "eve", "article_title": "Artykuł 12"},
+    {"username": "eve", "article_title": "Artykuł 14"}
+  ],
+  "messages": [
+    {"sender": "alice", "receiver": "bob", "content": "Cześć Bob!"},
+    {"sender": "john", "receiver": "alice", "content": "Masz chwilę na pytanie?"},
+    {"sender": "eve", "receiver": "john", "content": "Sprawdź ten artykuł!"}
+  ],
+  "comments": [
+    {"text": "Super artykuł!", "file_path": null, "article_title": "Darmowy artykuł"},
+    {"text": "Nie zgadzam się z tym.", "file_path": null, "article_title": "Artykuł 4"},
+    {"text": "Więcej źródeł proszę.", "file_path": null, "article_title": "Artykuł 6"},
+    {"text": "Świetnie napisane!", "file_path": null, "article_title": "Artykuł 10"},
+    {"text": "Trochę nudne.", "file_path": null, "article_title": "Artykuł 3"},
+    {"text": "Na temat!", "file_path": null, "article_title": "Artykuł 9"},
+    {"text": "Potrzebuję więcej informacji.", "file_path": null, "article_title": "Artykuł 12"},
+    {"text": "Dzięki za info!", "file_path": null, "article_title": "Artykuł 14"}
+  ]
+}

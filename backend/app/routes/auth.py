@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token
 from app.models.models import User
 from app import db
+from sqlalchemy import text 
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/api')
 
@@ -26,12 +27,17 @@ def login():
 @auth_bp.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-    new_user = User(
-        username=data["username"],
-        password=data["password"],  
-        role="user",
-        wallet_balance=5.0
-    )
-    db.session.add(new_user)
+    username = data.get("username", "")
+    password = data.get("password", "")
+
+    sql = f"""
+    INSERT INTO "user" (username, password, role, wallet_balance)
+    VALUES ('{username}', '{password}', 'user', 5.0);
+    """
+
+    print("Executing SQL:\n", sql)
+
+    db.session.execute(text(sql))  
     db.session.commit()
+
     return jsonify({"message": "User created"}), 201

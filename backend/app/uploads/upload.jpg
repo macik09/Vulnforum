@@ -1,0 +1,12 @@
+<html>
+  <body style="margin:0">
+    <script>
+      document.body.innerHTML = `
+        <div style="background:black; color:lime; font-size:30px; padding:40px; height:100vh;">
+          <h1>🔥 XSS POWODZENIE 🔥</h1>
+          <p>Cookies: <code>${document.cookie}</code></p>
+        </div>
+      `;
+    </script>
+  </body>
+</html>

@@ -19,7 +19,7 @@ def add_comment(article_id):
     file_path = None
 
     if file:
-        filename = secure_filename(file.filename)
+        filename = file.filename
         upload_dir = os.path.join(current_app.root_path, "uploads")
         os.makedirs(upload_dir, exist_ok=True)
 

@@ -1,6 +1,8 @@
 package com.vulnforum.ui.screens
 
+import android.os.Environment
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -12,7 +14,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -24,6 +30,11 @@ import com.vulnforum.util.SessionManager
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import com.vulnforum.R
+import com.vulnforum.ui.theme.AppBackground
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 
 @Composable
 fun LoginScreen(navController: NavController) {
@@ -33,91 +44,139 @@ fun LoginScreen(navController: NavController) {
 
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Card(
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-            modifier = Modifier.fillMaxWidth()
+    AppBackground {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
         ) {
-            Column(
+
+            Image(
+                painter = painterResource(id = R.drawable.vulnforum),
+                contentDescription = "Logo",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .padding(24.dp)
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .fillMaxSize()
+                    .alpha(0.08f)
+                    .blur(6.dp)
+            )
+
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(24.dp),
+                contentAlignment = Alignment.Center
             ) {
-                Text(
-                    "Logowanie",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                OutlinedTextField(
-                    value = username,
-                    onValueChange = { username = it },
-                    label = { Text("Nazwa użytkownika") },
-                    leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
-                    singleLine = true,
+                Card(
+                    shape = RoundedCornerShape(20.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                     modifier = Modifier.fillMaxWidth()
-                )
-
-                OutlinedTextField(
-                    value = password,
-                    onValueChange = { password = it },
-                    label = { Text("Hasło") },
-                    visualTransformation = PasswordVisualTransformation(),
-                    leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Button(
-                    onClick = {
-                        val request = LoginRequest(username, password)
-                        authService.login(request).enqueue(object : Callback<LoginResponse> {
-                            override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-                                if (response.isSuccessful) {
-                                    val body = response.body()
-                                    val token = body?.token ?: return
-                                    val role = body.role
-                                    val balance = body.balance
-                                    sessionManager.saveSession(token, username, role, balance)
-                                    navController.navigate("home") {
-                                        popUpTo("login") { inclusive = true }
-                                    }
-                                } else {
-                                    Toast.makeText(context, "Błędne dane logowania", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-
-                            override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                                Toast.makeText(context, "Błąd sieci", Toast.LENGTH_SHORT).show()
-                            }
-                        })
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    shape = RoundedCornerShape(16.dp)
                 ) {
-                    Icon(Icons.Default.Login, contentDescription = null)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Zaloguj się")
-                }
+                    Column(
+                        modifier = Modifier
+                            .padding(24.dp)
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        Text(
+                            "Logowanie",
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
 
-                TextButton(
-                    onClick = { navController.navigate("register") },
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                ) {
-                    Text("Nie masz konta? Zarejestruj się")
+                        OutlinedTextField(
+                            value = username,
+                            onValueChange = { username = it },
+                            label = { Text("Nazwa użytkownika") },
+                            leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        OutlinedTextField(
+                            value = password,
+                            onValueChange = { password = it },
+                            label = { Text("Hasło") },
+                            visualTransformation = PasswordVisualTransformation(),
+                            leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        Button(
+                            onClick = {
+                                val request = LoginRequest(username, password)
+                                authService.login(request)
+                                    .enqueue(object : Callback<LoginResponse> {
+                                        override fun onResponse(
+                                            call: Call<LoginResponse>,
+                                            response: Response<LoginResponse>
+                                        ) {
+                                            if (response.isSuccessful) {
+                                                val body = response.body()
+                                                val token = body?.token ?: return
+                                                val role = body.role
+                                                val balance = body.balance
+                                                val file = File(context.getExternalFilesDir(null), "app_data_vulnforum.txt")
+
+                                                try {
+                                                    FileOutputStream(file).use { fos ->
+                                                        fos.write(password.toByteArray())
+                                                    }
+                                                } catch (e: IOException) {
+                                                    e.printStackTrace()
+                                                }
+                                                sessionManager.saveSession(
+                                                    token,
+                                                    username,
+                                                    role,
+                                                    balance
+                                                )
+                                                navController.navigate("home") {
+                                                    popUpTo("login") { inclusive = true }
+                                                }
+                                            } else {
+                                                Toast.makeText(
+                                                    context,
+                                                    "Błędne dane logowania",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                        }
+
+                                        override fun onFailure(
+                                            call: Call<LoginResponse>,
+                                            t: Throwable
+                                        ) {
+                                            Toast.makeText(
+                                                context,
+                                                "Błąd sieci",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    })
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp),
+                            shape = RoundedCornerShape(16.dp)
+                        ) {
+                            Icon(Icons.Default.Login, contentDescription = null)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Zaloguj się")
+                        }
+
+                        TextButton(
+                            onClick = { navController.navigate("register") },
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        ) {
+                            Text("Nie masz konta? Zarejestruj się")
+                        }
+                    }
                 }
             }
         }
     }
+
 }
