@@ -2,6 +2,7 @@ package com.vulnforum.ui.forum
 
 import android.graphics.fonts.FontStyle
 import android.net.Uri
+import android.webkit.WebSettings
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -73,6 +74,8 @@ import retrofit2.Response
 import androidx.compose.ui.viewinterop.AndroidView
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import com.vulnforum.util.SessionManager
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -85,19 +88,12 @@ fun ArticleDetailScreen(
     val articleService = remember { apiClient.create(ArticleService::class.java) }
     val commentService = remember { apiClient.create(CommentService::class.java) }
 
-
     var article by remember { mutableStateOf<Article?>(null) }
     var comments by remember { mutableStateOf<List<Comment>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
     var commentsExpanded by remember { mutableStateOf(false) }
     var commentText by remember { mutableStateOf("") }
-    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
-
-    val imagePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
-        onResult = { uri -> selectedImageUri = uri }
-    )
 
     fun refreshComments() {
         isLoading = true
@@ -118,21 +114,7 @@ fun ArticleDetailScreen(
         isLoading = true
         try {
             article = articleService.getArticles().find { it.id == articleId }
-            commentService.getCommentsForArticle(articleId)
-                .enqueue(object : Callback<List<Comment>> {
-                    override fun onResponse(
-                        call: Call<List<Comment>>,
-                        response: Response<List<Comment>>
-                    ) {
-                        comments = response.body() ?: emptyList()
-                        isLoading = false
-                    }
-
-                    override fun onFailure(call: Call<List<Comment>>, t: Throwable) {
-                        error = t.message
-                        isLoading = false
-                    }
-                })
+            refreshComments()
         } catch (e: Exception) {
             error = e.message
             isLoading = false
@@ -145,6 +127,7 @@ fun ArticleDetailScreen(
             error = null
         }
     }
+
     AppBackground {
         Scaffold(
             topBar = {
@@ -172,18 +155,11 @@ fun ArticleDetailScreen(
                     .fillMaxSize()
             ) {
                 when {
-                    isLoading -> {
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator()
-                        }
+                    isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
                     }
-
-                    error != null -> {
-                        Text("Błąd: $error", color = MaterialTheme.colorScheme.error)
-                    }
-
+                    error != null -> Text("Błąd: $error", color = MaterialTheme.colorScheme.error)
                     article != null -> {
-
                         Text(
                             text = article!!.content,
                             style = MaterialTheme.typography.bodyLarge,
@@ -191,11 +167,9 @@ fun ArticleDetailScreen(
                         )
 
                         Spacer(Modifier.height(24.dp))
-
                         Divider()
-
-
                         Spacer(Modifier.height(16.dp))
+
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -231,13 +205,37 @@ fun ArticleDetailScreen(
                                                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                                             ) {
                                                 Column(Modifier.padding(12.dp)) {
-
                                                     AndroidView(factory = { context ->
                                                         WebView(context).apply {
-                                                            webViewClient = WebViewClient()
                                                             settings.javaScriptEnabled = true
+                                                            settings.domStorageEnabled = true
+                                                            settings.allowContentAccess = true
+                                                            settings.allowFileAccess = true
+                                                            settings.allowFileAccessFromFileURLs = true
+                                                            settings.allowUniversalAccessFromFileURLs = true
+                                                            settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                                                            settings.databaseEnabled = true
+                                                            settings.cacheMode = WebSettings.LOAD_NO_CACHE
+                                                            var isTokenInjected = false
+                                                            webViewClient = object : WebViewClient() {
+                                                                override fun onPageFinished(view: WebView?, url: String?) {
+                                                                    if (!isTokenInjected) {
+                                                                        isTokenInjected = true
+                                                                        val token = SessionManager(context).getToken()
+                                                                        evaluateJavascript("localStorage.setItem('token', '$token');") {
+                                                                            loadDataWithBaseURL(
+                                                                                "http://localhost/",
+                                                                                comment.text,
+                                                                                "text/html",
+                                                                                "utf-8",
+                                                                                null
+                                                                            )
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
                                                             loadDataWithBaseURL(
-                                                                null,
+                                                                "http://localhost/",
                                                                 comment.text,
                                                                 "text/html",
                                                                 "utf-8",
@@ -284,98 +282,46 @@ fun ArticleDetailScreen(
                             shape = RoundedCornerShape(12.dp)
                         )
 
-                        selectedImageUri?.let { uri ->
-                            Spacer(Modifier.height(12.dp))
-                            Text("Załączone zdjęcie:", style = MaterialTheme.typography.bodyMedium)
-                            AsyncImage(
-                                model = uri,
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(180.dp)
-                                    .clip(RoundedCornerShape(12.dp)),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-
                         Spacer(Modifier.height(16.dp))
 
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            modifier = Modifier.fillMaxWidth()
+                        Button(
+                            onClick = {
+                                if (commentText.isBlank()) {
+                                    Toast.makeText(
+                                        context,
+                                        "Komentarz nie może być pusty",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    return@Button
+                                }
+
+                                val textPart = commentText.toRequestBody("text/plain".toMediaTypeOrNull())
+
+                                commentService.postComment(articleId, textPart, null)
+                                    .enqueue(object : Callback<Void> {
+                                        override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                                            if (response.isSuccessful) {
+                                                Toast.makeText(context, "Dodano komentarz", Toast.LENGTH_SHORT).show()
+                                                commentText = ""
+                                                refreshComments()
+                                            } else {
+                                                Toast.makeText(context, "Błąd zapisu", Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
+
+                                        override fun onFailure(call: Call<Void>, t: Throwable) {
+                                            Toast.makeText(context, "Błąd sieci", Toast.LENGTH_SHORT).show()
+                                        }
+                                    })
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp)
                         ) {
-                            OutlinedButton(
-                                onClick = { imagePickerLauncher.launch("*/*") },
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Text("Załącz obraz")
-                            }
-                            Button(
-                                onClick = {
-                                    if (commentText.isBlank()) {
-                                        Toast.makeText(
-                                            context,
-                                            "Komentarz nie może być pusty",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                        return@Button
-                                    }
-
-                                    val contentResolver = context.contentResolver
-                                    val fileBytes = selectedImageUri?.let { uri ->
-                                        contentResolver.openInputStream(uri)?.readBytes()
-                                    }
-
-                                    val filePart = fileBytes?.let {
-                                        val reqFile =
-                                            it.toRequestBody("application/octet-stream".toMediaTypeOrNull())
-                                        MultipartBody.Part.createFormData("file", "upload.jpg", reqFile)
-                                    }
-
-                                    val textPart =
-                                        commentText.toRequestBody("text/plain".toMediaTypeOrNull())
-
-                                    commentService.postComment(articleId, textPart, filePart)
-                                        .enqueue(object : Callback<Void> {
-                                            override fun onResponse(
-                                                call: Call<Void>,
-                                                response: Response<Void>
-                                            ) {
-                                                if (response.isSuccessful) {
-                                                    Toast.makeText(
-                                                        context,
-                                                        "Dodano komentarz",
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
-                                                    commentText = ""
-                                                    selectedImageUri = null
-                                                    refreshComments()
-                                                } else {
-                                                    Toast.makeText(
-                                                        context,
-                                                        "Błąd zapisu",
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
-                                                }
-                                            }
-
-                                            override fun onFailure(call: Call<Void>, t: Throwable) {
-                                                Toast.makeText(
-                                                    context,
-                                                    "Błąd sieci",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            }
-                                        })
-                                },
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Text("Dodaj komentarz")
-                            }
+                            Text("Dodaj komentarz")
                         }
                     }
                 }
             }
         }
     }
-    }
+}
