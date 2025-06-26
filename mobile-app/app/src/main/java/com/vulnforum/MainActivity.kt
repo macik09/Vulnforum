@@ -1,6 +1,8 @@
 package com.vulnforum
 
 import android.os.Bundle
+import android.webkit.WebStorage
+import android.webkit.WebView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
@@ -27,24 +29,40 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            MaterialTheme{
+            MaterialTheme {
                 val navController = rememberNavController()
+                val context = LocalContext.current
+
+
+                val onLogoutAction: () -> Unit = {
+                    val appCtx = context.applicationContext
+
+
+                    SessionManager(appCtx).clear()
+
+
+                    WebView(appCtx).clearCache(true)
+                    WebView(appCtx).clearHistory()
+                    WebStorage.getInstance().deleteAllData()
+
+
+                    navController.navigate("login") {
+                        popUpTo("home") { inclusive = true }
+                    }
+                }
 
                 NavHost(navController, startDestination = "login") {
                     composable("login") { LoginScreen(navController) }
+
                     composable("home") {
-                        val context = LocalContext.current
                         val sessionManager = remember { SessionManager(context) }
                         HomeScreen(
                             navController = navController,
                             username = sessionManager.getUsername().toString(),
-                            onLogout = {
-                                navController.navigate("login") {
-                                    popUpTo("home") { inclusive = true }
-                                }
-                            }
+                            onLogout = onLogoutAction
                         )
                     }
+
                     composable("forum") { ForumScreen(navController) }
                     composable("register") { RegisterScreen(navController) }
                     composable("admin_panel") { AdminScreen(navController) }
@@ -65,12 +83,8 @@ class MainActivity : ComponentActivity() {
                         ArticleDetailScreen(articleId, navController)
                     }
                     composable("challenges") { ChallengesScreen(navController) }
-                    composable("logout") {
-                        val context = LocalContext.current
-                        val sessionManager = remember { SessionManager(context) }
-                        sessionManager.clear()
-                        LogoutScreen(navController)
-                    }
+
+
                 }
             }
         }

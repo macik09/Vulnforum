@@ -130,13 +130,13 @@ fun PaywallScreenContent(
                 }
             )
         },
-        containerColor = Color.Transparent  // <-- przezroczyste tło, żeby AppBackground było widoczne
+        containerColor = Color.Transparent
     ) { padding ->
 
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                // Gradient możesz tu zostawić, albo usunąć jeśli wystarczy AppBackground
+
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
@@ -182,7 +182,7 @@ fun PaywallScreenContent(
                     )
                     Spacer(Modifier.height(32.dp))
 
-                    // Animowany przycisk płatności z efektem naciśnięcia
+
                     var pressed by remember { mutableStateOf(false) }
                     val scale by animateFloatAsState(targetValue = if (pressed) 0.95f else 1f)
 

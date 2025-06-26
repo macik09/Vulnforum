@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 class DeeplinkAddFundsActivity : ComponentActivity() {
 
@@ -23,6 +24,8 @@ class DeeplinkAddFundsActivity : ComponentActivity() {
 
         val amountParam = intent?.data?.getQueryParameter("amount")
         val amount = amountParam?.toFloatOrNull()
+        val nonce = UUID.randomUUID().toString()
+
 
         if (amount != null && amount > 0 && token != null) {
             val walletService = ApiClient.getClient(context).create(WalletService::class.java)
@@ -30,7 +33,8 @@ class DeeplinkAddFundsActivity : ComponentActivity() {
 
             scope.launch {
                 try {
-                    val response = walletService.addFunds(AddFundsRequest(amount))
+                    val response = walletService.addFunds(AddFundsRequest(amount, nonce))
+
                     withContext(Dispatchers.Main) {
                         Toast.makeText(context, "Dodano $amount vulndolców!", Toast.LENGTH_LONG).show()
                         finish()

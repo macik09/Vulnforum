@@ -1,8 +1,8 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, make_response
 from sqlalchemy import text
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.models.models import db, Article, User, UnlockedArticle
-
+from app.routes.wallet import SECRET_UNLOCK_KEY
 
 articles_bp = Blueprint('articles', __name__, url_prefix='/api/articles')
 
@@ -35,6 +35,13 @@ def get_articles():
 @articles_bp.route('/unlock/<int:article_id>', methods=['POST'])
 @jwt_required()
 def unlock_article(article_id):
+   
+    provided_access_key = request.headers.get('X-Access-Key')
+    
+
+    if not provided_access_key or provided_access_key != SECRET_UNLOCK_KEY:
+        return jsonify({"error": "Brak lub nieprawidłowy klucz dostępu. Musisz najpierw wykonać 'zakup' w portfelu."}), 400
+
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     article = Article.query.get(article_id)
@@ -51,14 +58,14 @@ def unlock_article(article_id):
     if already_unlocked:
         return jsonify({"message": "Artykuł już odblokowany"})
 
-    if user.wallet_balance < 5:
+ 
+    article_price = 5 
+    if user.wallet_balance < article_price:
         return jsonify({"error": "Za mało vulndolców"}), 403
 
-    user.wallet_balance -= 5
+    user.wallet_balance -= article_price
     unlock = UnlockedArticle(user_id=user_id, article_id=article_id)
     db.session.add(unlock)
     db.session.commit()
 
     return jsonify({"message": f"Odblokowano artykuł {article.title}"}), 200
-
-

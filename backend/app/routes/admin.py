@@ -1,12 +1,29 @@
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import jwt_required
-from app.models.models import db, Article, User, UnlockedArticle
+from flask_jwt_extended import jwt_required, get_jwt 
+from app.models.models import Article, User 
+from app import db
+import logging
+
+logger = logging.getLogger(__name__)
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/api/admin')
+
+
+def verify_admin_role():
+    claims = get_jwt()
+    if claims.get("role") != "admin":
+        logger.warning(f"Access denied: User with role '{claims.get('role', 'N/A')}' tried to access admin endpoint.")
+        return False, jsonify({"error": "Dostęp zabroniony. Wymagane uprawnienia administratora."}), 403
+    return True, None, None 
 
 @admin_bp.route('/articles/<int:article_id>', methods=['PATCH'])
 @jwt_required()
 def update_article(article_id):
+   
+    is_admin, error_response, status_code = verify_admin_role()
+    if not is_admin:
+        return error_response, status_code
+
     article = Article.query.get(article_id)
     if not article:
         return jsonify({"error": "Nie znaleziono artykułu"}), 404
@@ -25,6 +42,11 @@ def update_article(article_id):
 @admin_bp.route('/users', methods=['GET'])
 @jwt_required()
 def get_all_users():
+    
+    is_admin, error_response, status_code = verify_admin_role()
+    if not is_admin:
+        return error_response, status_code
+
     users = User.query.all()
     result = []
     for user in users:

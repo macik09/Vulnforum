@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 class WalletViewModel(private val walletService: WalletService) : ViewModel() {
 
@@ -35,7 +36,8 @@ class WalletViewModel(private val walletService: WalletService) : ViewModel() {
     fun addFunds(amount: Float) {
         viewModelScope.launch {
             try {
-                val request = AddFundsRequest(amount)
+                val nonce = UUID.randomUUID().toString()
+                val request = AddFundsRequest(amount, nonce)
                 val response = walletService.addFunds(request)
 
                 _balance.value = response.new_balance

@@ -12,6 +12,8 @@ import com.vulnforum.network.PurchaseRequest
 import com.vulnforum.network.WalletService
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.io.IOException
 
 
 class ForumViewModel(
@@ -25,29 +27,52 @@ class ForumViewModel(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
+    private var lastReceivedAccessKey: String? = null
+
     init {
         getArticles()
     }
 
     fun unlockArticle(articleId: Int, onSuccess: () -> Unit = {}) {
         viewModelScope.launch {
+            _errorMessage.value = null
+
             try {
                 val articlePrice = 10000f
-                val purchaseResponse = walletService.purchase(PurchaseRequest(amount = articlePrice))
+                val purchaseRequest = PurchaseRequest(amount = articlePrice)
 
-                if (purchaseResponse.new_balance >= 0) {
-                    val response = articleService.unlockArticle(articleId)
-                    if (response.isSuccessful) {
-                        getArticles()
-                        onSuccess()
+                val purchaseRetrofitResponse = walletService.purchase(purchaseRequest)
+
+                if (purchaseRetrofitResponse.isSuccessful) {
+                    lastReceivedAccessKey = purchaseRetrofitResponse.headers()["X-Access-Key"]
+                    val purchaseBody = purchaseRetrofitResponse.body()
+                    val isBalanceSufficient = purchaseBody?.new_balance?.let { it >= 0 } ?: false
+
+                    if (lastReceivedAccessKey != null && isBalanceSufficient) {
+                        val unlockResponse = articleService.unlockArticle(articleId, lastReceivedAccessKey!!)
+
+                        if (unlockResponse.isSuccessful) {
+                            getArticles()
+                            onSuccess()
+                        } else {
+                            val errorBody = unlockResponse.errorBody()?.string()
+                            _errorMessage.value = "Nie udało się odblokować artykułu: ${unlockResponse.code()} ${errorBody ?: "Nieznany błąd"}"
+                        }
+                    } else if (lastReceivedAccessKey == null) {
+                        _errorMessage.value = "Błąd: Serwer nie zwrócił klucza dostępu po zakupie."
                     } else {
-                        _errorMessage.value = "Nie udało się odblokować artykułu."
+                        _errorMessage.value = purchaseBody?.message ?: "Za mało vulndolców na zakup artykułu."
                     }
                 } else {
-                    _errorMessage.value = "Za mało vulndolców na zakup artykułu."
+                    val errorBody = purchaseRetrofitResponse.errorBody()?.string()
+                    _errorMessage.value = "Błąd zakupu: ${purchaseRetrofitResponse.code()} ${errorBody ?: "Nieznany błąd"}"
                 }
+            } catch (e: HttpException) {
+                _errorMessage.value = "Błąd komunikacji HTTP: ${e.code()} - ${e.message()}"
+            } catch (e: IOException) {
+                _errorMessage.value = "Błąd połączenia sieciowego: ${e.message}"
             } catch (e: Exception) {
-                _errorMessage.value = "Błąd zakupu: ${e.message}"
+                _errorMessage.value = "Wystąpił nieoczekiwany błąd: ${e.message}"
             }
         }
     }

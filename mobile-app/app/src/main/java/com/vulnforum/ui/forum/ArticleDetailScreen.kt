@@ -2,6 +2,11 @@ package com.vulnforum.ui.forum
 
 import android.graphics.fonts.FontStyle
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -205,47 +210,67 @@ fun ArticleDetailScreen(
                                                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                                             ) {
                                                 Column(Modifier.padding(12.dp)) {
-                                                    AndroidView(factory = { context ->
-                                                        WebView(context).apply {
-                                                            settings.javaScriptEnabled = true
-                                                            settings.domStorageEnabled = true
-                                                            settings.allowContentAccess = true
-                                                            settings.allowFileAccess = true
-                                                            settings.allowFileAccessFromFileURLs = true
-                                                            settings.allowUniversalAccessFromFileURLs = true
-                                                            settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-                                                            settings.databaseEnabled = true
-                                                            settings.cacheMode = WebSettings.LOAD_NO_CACHE
-                                                            var isTokenInjected = false
-                                                            webViewClient = object : WebViewClient() {
-                                                                override fun onPageFinished(view: WebView?, url: String?) {
-                                                                    if (!isTokenInjected) {
-                                                                        isTokenInjected = true
-                                                                        val token = SessionManager(context).getToken()
-                                                                        evaluateJavascript("localStorage.setItem('token', '$token');") {
-                                                                            loadDataWithBaseURL(
-                                                                                "http://localhost/",
-                                                                                comment.text,
-                                                                                "text/html",
-                                                                                "utf-8",
-                                                                                null
-                                                                            )
-                                                                        }
+                                                    AndroidView(
+                                                        factory = { ctx ->
+                                                            WebView(ctx).apply {
+                                                                settings.javaScriptEnabled = true
+                                                                settings.domStorageEnabled = true
+                                                                settings.allowContentAccess = true
+                                                                settings.allowFileAccess = true
+                                                                settings.allowFileAccessFromFileURLs = true
+                                                                settings.allowUniversalAccessFromFileURLs = true
+                                                                settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                                                                settings.databaseEnabled = true
+                                                                settings.cacheMode = WebSettings.LOAD_NO_CACHE
+
+
+                                                                webViewClient = object : WebViewClient() {
+                                                                    override fun onPageFinished(view: WebView?, url: String?) {
+                                                                        super.onPageFinished(view, url)
+                                                                        Log.d("WebViewDebug", "onPageFinished dla URL: $url")
+                                                                    }
+
+                                                                    override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
+                                                                        super.onReceivedError(view, request, error)
+                                                                        Log.e("WebViewError", "Błąd ładowania WebView: ${error?.description}")
                                                                     }
                                                                 }
+
+                                                                loadUrl("about:blank")
                                                             }
-                                                            loadDataWithBaseURL(
-                                                                "http://localhost/",
-                                                                comment.text,
+                                                        },
+                                                        update = { webView ->
+                                                            val token = SessionManager(context).getToken()
+                                                            val htmlContent = comment.text // Pobierz treść komentarza
+                                                            val baseUrl = "http://localhost/"
+
+                                                            // 1. Załaduj właściwą zawartość HTML z baseURL "http://localhost/".
+                                                            // To ustawia kontekst origina WebView.
+                                                            webView.loadDataWithBaseURL(
+                                                                baseUrl,
+                                                                htmlContent,
                                                                 "text/html",
                                                                 "utf-8",
                                                                 null
                                                             )
-                                                        }
-                                                    },
+
+
+                                                            Handler(Looper.getMainLooper()).postDelayed({
+                                                                if (token != null) {
+                                                                    webView.evaluateJavascript("localStorage.setItem('token', '$token');") { result ->
+                                                                        Log.d("WebViewDebug", "Wstrzyknięto token do localStorage.")
+
+                                                                    }
+                                                                } else {
+                                                                    Log.w("WebViewDebug", "Token null, nie wstrzyknięto do localStorage.")
+                                                                }
+                                                            }, 150)
+
+                                                        },
                                                         modifier = Modifier
                                                             .fillMaxWidth()
-                                                            .height(160.dp))
+                                                            .height(60.dp)
+                                                    )
 
                                                     comment.filePath?.let { path ->
                                                         AsyncImage(

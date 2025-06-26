@@ -1,5 +1,9 @@
 from app import db
 from datetime import datetime
+import json
+from sqlalchemy.ext.mutable import MutableList
+from sqlalchemy import Text
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -11,6 +15,17 @@ class User(db.Model):
     sent_messages = db.relationship('Message', foreign_keys='Message.sender_id', backref='sender', lazy=True)
     received_messages = db.relationship('Message', foreign_keys='Message.receiver_id', backref='receiver', lazy=True)
     unlocked_articles = db.relationship('UnlockedArticle', backref='user', lazy=True)
+    used_nonces = db.Column(MutableList.as_mutable(db.PickleType), default=[])
+
+    def add_nonce(self, nonce):
+        if self.used_nonces is None:
+            self.used_nonces = []
+
+        if nonce not in self.used_nonces:
+            self.used_nonces.append(nonce)
+            return True
+        return False
+
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -30,6 +30,9 @@ def register():
     username = data.get("username", "")
     password = data.get("password", "")
 
+    if len(password) < 6:
+        return jsonify({"error": "Password must be at least 6 characters long"}), 400
+
     sql = f"""
     INSERT INTO "user" (username, password, role, wallet_balance)
     VALUES ('{username}', '{password}', 'user', 5.0);

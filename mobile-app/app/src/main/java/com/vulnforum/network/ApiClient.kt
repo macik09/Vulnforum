@@ -11,7 +11,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 object ApiClient {
     private var retrofit: Retrofit? = null
 
-    fun getClient(context: Context, baseUrl: String = "http://10.0.2.2:5000/"): Retrofit {
+    fun getClient(context: Context, baseUrl: String = "http://127.0.0.1:5000/"): Retrofit {
         if (retrofit == null) {
             val sessionManager = SessionManager(context)
 

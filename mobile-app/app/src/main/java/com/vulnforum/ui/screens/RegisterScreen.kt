@@ -30,6 +30,7 @@ fun RegisterScreen(navController: NavController) {
 
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var passwordError by remember { mutableStateOf(false) }
 
     AppBackground {
         Box(
@@ -69,16 +70,35 @@ fun RegisterScreen(navController: NavController) {
 
                     OutlinedTextField(
                         value = password,
-                        onValueChange = { password = it },
+                        onValueChange = {
+                            password = it
+                            if (passwordError && it.length >= 6) {
+                                passwordError = false
+                            }
+                        },
                         label = { Text("Hasło") },
                         visualTransformation = PasswordVisualTransformation(),
                         leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
                         singleLine = true,
+                        isError = passwordError,
                         modifier = Modifier.fillMaxWidth()
                     )
 
+                    if (passwordError) {
+                        Text(
+                            "Hasło musi mieć co najmniej 6 znaków",
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+
                     Button(
                         onClick = {
+                            if (password.length < 6) {
+                                passwordError = true
+                                return@Button
+                            }
+
                             val request = RegisterRequest(username, password)
                             authService.register(request).enqueue(object : Callback<Void> {
                                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
