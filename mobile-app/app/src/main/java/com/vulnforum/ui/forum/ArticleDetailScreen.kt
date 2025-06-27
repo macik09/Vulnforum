@@ -241,11 +241,10 @@ fun ArticleDetailScreen(
                                                         },
                                                         update = { webView ->
                                                             val token = SessionManager(context).getToken()
-                                                            val htmlContent = comment.text // Pobierz treść komentarza
+                                                            val htmlContent = comment.text
                                                             val baseUrl = "http://localhost/"
 
-                                                            // 1. Załaduj właściwą zawartość HTML z baseURL "http://localhost/".
-                                                            // To ustawia kontekst origina WebView.
+
                                                             webView.loadDataWithBaseURL(
                                                                 baseUrl,
                                                                 htmlContent,
