@@ -1,7 +1,6 @@
 package com.vulnforum.ui.forum
 
-import android.graphics.fonts.FontStyle
-import android.net.Uri
+
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -9,8 +8,6 @@ import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -46,7 +43,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -67,18 +63,15 @@ import com.vulnforum.network.ArticleService
 import com.vulnforum.network.CommentService
 import com.vulnforum.ui.theme.AppBackground
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
-
-
-
 import androidx.compose.ui.viewinterop.AndroidView
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import com.vulnforum.util.SessionManager
 
 
@@ -158,6 +151,7 @@ fun ArticleDetailScreen(
                     .padding(padding)
                     .padding(16.dp)
                     .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
             ) {
                 when {
                     isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
