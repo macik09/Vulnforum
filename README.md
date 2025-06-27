@@ -25,6 +25,8 @@ Projekt zawiera wiele typowych błędów bezpieczeństwa aplikacji mobilnych, m.
 
 ## ▶️ Uruchomienie
 
+Przed uruchomieniem backendu uruchom emulator, aby uniknąć błędów z połączeniem
+
 ### Backend (Flask)
 
 ```bash  
