@@ -26,6 +26,9 @@ def add_funds():
     if not user:
         return jsonify({"message": "Użytkownik nie znaleziony"}), 404
 
+    if user.used_nonces is None:
+        user.used_nonces = []
+        
     data = request.get_json()
     amount = data.get('amount')
     nonce = data.get('nonce')  
