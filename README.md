@@ -54,13 +54,18 @@ The following instructions will get the VulnForum environment running locally.
 
 * Android Studio / ADB
 * Python 3.x
+* **Emulator/Device:** Ensure your emulator is running, or a physical device is connected, before starting the backend, as the application relies on the host-to-emulator network setup (e.g., Docker port forwarding, or using the 10.0.2.2 gateway) to connect.
 
-### 1. Backend (Flask API)
+### 1. Launch Emulator / Connect Device
 
-The backend must be running before the mobile app attempts to connect.
+Start your Android Emulator or ensure your physical device is properly connected and recognized by ADB.
 
-```bash  
-cd backend  
+### 2. Backend (Flask API)
+
+The backend must be running after the emulator is ready.
+
+```bash  
+cd backend  
 ./start.sh
 ```
 
