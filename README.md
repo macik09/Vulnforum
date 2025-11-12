@@ -42,7 +42,6 @@ VulnForum includes a wide array of common mobile and API security issues, mapped
 * **Insecure API Configuration** (CORS)
 * **Sensitive Data Leakage** (Logging, Error Messages)
 
-**For a detailed description of each vulnerability, including its location and mapping to MASTG controls, please see the [VULNERABILITIES.md] file.**
 
 ---
 

@@ -6,11 +6,6 @@
     
 - **Description:** The application's price calculation is performed on the client (frontend), which is trusted by the server. This allows a user to modify the article's price (e.g., to 1 VulnDollar) before "purchasing." Upon this "purchase," the server issues a premium **`x-access-key`** that is accepted globally by all premium API endpoints, without subsequent verification of the original payment's legitimacy.
     
-- **MASTG Mapping:**
-    
-    - **MASTG-AUTH-0004:** Authorization checks are not correctly enforced on the remote endpoint.
-        
-    - **MASTG-CODE-0004:** Inadequate hardening against client-side tampering (price manipulation).
         
 
 ### 2\. Tools Required
@@ -62,7 +57,7 @@
     
 - **Description:** The application's user registration endpoint uses an improperly sanitized SQL query, likely relying on string concatenation to insert user-provided data. This allows an attacker to inject SQL commands to modify the data being inserted, specifically the role or privilege level, bypassing intended application logic.
     
-- **MASTG Mapping:** **MASTG-API-0001** (All input from the mobile app is validated and sanitized on the server side).
+
     
 
 ### 2\. Tools Required
@@ -104,13 +99,7 @@ This payload effectively changes the SQL query from inserting a standard user to
     
 - **Description:** The application registers a Deep Link scheme (`vulnforum://`) that maps to an Activity or Composable function designed to handle internal actions, such as adding funds. The handler function **fails to validate the caller's identity** and **lacks proper authorization checks** to ensure the requested `amount` parameter is coming from a trusted source (e.g., a secure, authenticated API response) rather than an external, unverified source like a third-party application or the `adb shell`.
     
-- **MASTG Mapping:**
-    
-    - **MASTG-IPC-0004:** The app protects exported components from unauthorized invocation. (Deeplink is essentially an entry point.)
-        
-    - **MASTG-AUTH-0005:** The remote endpoint verifies that the user is authorized to perform the requested action. (Although invoked locally, the action has financial/authorization implications that should be guarded.)
-        
-    - **MASTG-CODE-0003:** Sensitive functions (like financial transactions) implement strong authorization and integrity checks.
+
         
 
 ### 2\. Tools Required
@@ -144,11 +133,7 @@ This payload effectively changes the SQL query from inserting a standard user to
     
 - **Description:** The application's comment functionality fails to adequately sanitize user input before rendering it to other users. This allows an attacker to embed malicious HTML/JavaScript (the provided payload) into a comment. When a victim views the affected comment, the script executes in their context, bypassing security measures to steal sensitive local data (the authentication token).
     
-- **MASTG Mapping:**
-    
-    - **MASTG-API-0001:** All data and parameters are validated and sanitized on the server side. (The server failed to sanitize the comment body.)
-        
-    - **MASTG-CODE-0003:** Sensitive functions (like viewing article comments) should prevent the execution of untrusted code.
+
         
 
 ### 2\. Tools Required
