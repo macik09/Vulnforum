@@ -45,10 +45,9 @@ class WalletViewModel(private val walletService: WalletService) : ViewModel() {
 
             } catch (e: Exception) {
 
-                println("Błąd podczas dodawania środków: ${e.message}")
+                println("Error while adding funds: ${e.message}")
 
             }
         }
     }
 }
-

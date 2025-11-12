@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -78,12 +77,12 @@ fun ForumScreen(navController: NavController) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Artykuły", style = MaterialTheme.typography.headlineSmall) },
+                    title = { Text("Articles", style = MaterialTheme.typography.headlineSmall) },
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
                             Icon(
                                 imageVector = Icons.Default.ArrowBack,
-                                contentDescription = "Wróć"
+                                contentDescription = "Back"
                             )
                         }
                     },
@@ -92,7 +91,7 @@ fun ForumScreen(navController: NavController) {
                     )
                 )
             },
-            containerColor = Color.Transparent // <- to umożliwia widoczność AppBackground
+            containerColor = Color.Transparent // <- allows AppBackground to be visible
         ) { padding ->
             LazyColumn(
                 modifier = Modifier
@@ -146,7 +145,7 @@ fun ArticleCardStyled(
 
             if (article.isPaid) {
                 Text(
-                    text = if (article.isUnlocked) "Opłacony" else "Płatny",
+                    text = if (article.isUnlocked) "Paid" else "Premium",
                     style = MaterialTheme.typography.labelMedium,
                     color = if (article.isUnlocked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
                     modifier = Modifier.padding(bottom = 8.dp)
@@ -166,13 +165,13 @@ fun ArticleCardStyled(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = if (article.isPaid) "" else "Darmowy",
+                    text = if (article.isPaid) "" else "Free",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
 
                 Text(
-                    text = "Kliknij, aby ${if (article.isPaid && !article.isUnlocked) "odblokować" else "czytać"}",
+                    text = "Click to ${if (article.isPaid && !article.isUnlocked) "unlock" else "read"}",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.secondary
                 )

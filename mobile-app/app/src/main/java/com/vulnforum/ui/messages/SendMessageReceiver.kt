@@ -18,7 +18,7 @@ class SendMessageReceiver : BroadcastReceiver() {
         val content = intent.getStringExtra("content")
 
         if (recipient.isNullOrBlank() || content.isNullOrBlank()) {
-            Log.e("SendMessageReceiver", "Brak danych")
+            Log.e("SendMessageReceiver", "Missing recipient or message content")
             return
         }
 
@@ -38,12 +38,12 @@ class SendMessageReceiver : BroadcastReceiver() {
                 )
                 val response = api.sendMessage(message).execute()
                 if (response.isSuccessful) {
-                    Log.i("SendMessageReceiver", "Wysłano wiadomość jako $sender do $recipient")
+                    Log.i("SendMessageReceiver", "Message sent from $sender to $recipient")
                 } else {
-                    Log.e("SendMessageReceiver", "Błąd API: ${response.code()}")
+                    Log.e("SendMessageReceiver", "API error: ${response.code()}")
                 }
             } catch (e: Exception) {
-                Log.e("SendMessageReceiver", "Wyjątek: ${e.message}")
+                Log.e("SendMessageReceiver", "Exception: ${e.message}")
             }
         }
     }

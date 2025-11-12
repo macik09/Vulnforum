@@ -1,7 +1,5 @@
 package com.vulnforum.ui.screens
 
-
-
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
@@ -102,7 +100,7 @@ fun AdminScreen(
                 .padding(16.dp)
         ) {
             item {
-                SectionHeader(icon = "👥", title = "Użytkownicy")
+                SectionHeader(icon = "👥", title = "Users")
                 Spacer(Modifier.height(12.dp))
             }
 
@@ -122,13 +120,13 @@ fun AdminScreen(
                         )
                         Spacer(Modifier.height(6.dp))
                         Text(
-                            text = "💰 Saldo: ${user.balance} vulndolców",
+                            text = "💰 Balance: ${user.balance} vulndols",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(Modifier.height(6.dp))
                         Text(
-                            text = "📖 Odblokowane: ${if(user.unlocked_articles.isEmpty()) "Brak" else user.unlocked_articles.joinToString()}",
+                            text = "📖 Unlocked: ${if(user.unlocked_articles.isEmpty()) "None" else user.unlocked_articles.joinToString()}",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                         )
@@ -138,7 +136,7 @@ fun AdminScreen(
 
             item {
                 Spacer(Modifier.height(24.dp))
-                SectionHeader(icon = "📝", title = "Artykuły")
+                SectionHeader(icon = "📝", title = "Articles")
                 Spacer(Modifier.height(12.dp))
             }
 
@@ -164,7 +162,7 @@ fun AdminScreen(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                "Płatny:",
+                                "Premium:",
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )

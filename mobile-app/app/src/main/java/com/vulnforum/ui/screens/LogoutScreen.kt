@@ -6,5 +6,5 @@ import androidx.navigation.NavController
 
 @Composable
 fun LogoutScreen(navController: NavController) {
-    Text("Wylogowano")
+    Text("Logged out")
 }

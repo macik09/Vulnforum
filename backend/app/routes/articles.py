@@ -25,7 +25,7 @@ def get_articles():
     {
         "id": a.id,
         "title": a.title,
-        "content": a.content if not a.is_paid or UnlockedArticle.query.filter_by(user_id=user_id, article_id=a.id).first() else "Zablokowana treść — zapłać",
+        "content": a.content if not a.is_paid or UnlockedArticle.query.filter_by(user_id=user_id, article_id=a.id).first() else "Locked content — please pay",
         "is_paid": a.is_paid,
         "is_unlocked": not a.is_paid or UnlockedArticle.query.filter_by(user_id=user_id, article_id=a.id).first() is not None
     } for a in articles
@@ -38,34 +38,32 @@ def unlock_article(article_id):
    
     provided_access_key = request.headers.get('X-Access-Key')
     
-
     if not provided_access_key or provided_access_key != SECRET_UNLOCK_KEY:
-        return jsonify({"error": "Brak lub nieprawidłowy klucz dostępu. Musisz najpierw wykonać 'zakup' w portfelu."}), 400
+        return jsonify({"error": "Missing or invalid access key. You must first perform a 'purchase' in your wallet."}), 400
 
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     article = Article.query.get(article_id)
 
     if not article:
-        return jsonify({"error": "Artykuł nie istnieje"}), 404
+        return jsonify({"error": "Article does not exist"}), 404
 
     if not article.is_paid:
-        return jsonify({"message": "Artykuł już jest darmowy"})
+        return jsonify({"message": "Article is already free"})
 
     already_unlocked = UnlockedArticle.query.filter_by(
         user_id=user_id, article_id=article_id
     ).first()
     if already_unlocked:
-        return jsonify({"message": "Artykuł już odblokowany"})
+        return jsonify({"message": "Article already unlocked"})
 
- 
-    article_price = 5 
+    article_price = 0 
     if user.wallet_balance < article_price:
-        return jsonify({"error": "Za mało vulndolców"}), 403
+        return jsonify({"error": "Insufficient vulndol balance"}), 403
 
     user.wallet_balance -= article_price
     unlock = UnlockedArticle(user_id=user_id, article_id=article_id)
     db.session.add(unlock)
     db.session.commit()
 
-    return jsonify({"message": f"Odblokowano artykuł {article.title}"}), 200
+    return jsonify({"message": f"Article '{article.title}' unlocked successfully"}), 200

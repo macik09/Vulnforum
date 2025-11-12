@@ -1,7 +1,5 @@
 package com.vulnforum.ui.screens
 
-
-
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -56,7 +54,7 @@ fun HomeScreen(
                 CenterAlignedTopAppBar(
                     title = {
                         Text(
-                            text = "Witaj, $username",
+                            text = "Welcome, $username",
                             style = MaterialTheme.typography.headlineSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -65,14 +63,14 @@ fun HomeScreen(
                         IconButton(onClick = onLogout) {
                             Icon(
                                 imageVector = Icons.Default.ExitToApp,
-                                contentDescription = "Wyloguj",
+                                contentDescription = "Logout",
                                 tint = MaterialTheme.colorScheme.error
                             )
                         }
                         IconButton(onClick = { navController.navigate("wallet") }) {
                             Icon(
                                 imageVector = Icons.Default.AccountBalanceWallet,
-                                contentDescription = "Portfel",
+                                contentDescription = "Wallet",
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -108,7 +106,7 @@ fun HomeScreen(
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.vulnforum),
-                        contentDescription = "Logo aplikacji",
+                        contentDescription = "App logo",
                         contentScale = ContentScale.FillWidth,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -121,10 +119,10 @@ fun HomeScreen(
 
                 val buttons = mutableListOf(
                     Pair("Forum", Icons.Default.Forum) to { navController.navigate("forum") },
-                    Pair("Wiadomości", Icons.Default.Message) to { navController.navigate("messages") }
+                    Pair("Messages", Icons.Default.Message) to { navController.navigate("messages") }
                 )
                 if (role == "admin") {
-                    buttons.add(Pair("Panel Admina", Icons.Default.AdminPanelSettings) to { navController.navigate("admin_panel") })
+                    buttons.add(Pair("Admin Panel", Icons.Default.AdminPanelSettings) to { navController.navigate("admin_panel") })
                 }
 
                 Column(

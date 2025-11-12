@@ -54,7 +54,7 @@ fun RegisterScreen(navController: NavController) {
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
-                        "Rejestracja",
+                        "Registration",
                         style = MaterialTheme.typography.headlineSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -62,7 +62,7 @@ fun RegisterScreen(navController: NavController) {
                     OutlinedTextField(
                         value = username,
                         onValueChange = { username = it },
-                        label = { Text("Nazwa użytkownika") },
+                        label = { Text("Username") },
                         leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
@@ -76,7 +76,7 @@ fun RegisterScreen(navController: NavController) {
                                 passwordError = false
                             }
                         },
-                        label = { Text("Hasło") },
+                        label = { Text("Password") },
                         visualTransformation = PasswordVisualTransformation(),
                         leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
                         singleLine = true,
@@ -86,7 +86,7 @@ fun RegisterScreen(navController: NavController) {
 
                     if (passwordError) {
                         Text(
-                            "Hasło musi mieć co najmniej 6 znaków",
+                            "Password must be at least 6 characters long",
                             color = MaterialTheme.colorScheme.error,
                             style = MaterialTheme.typography.bodySmall
                         )
@@ -103,15 +103,15 @@ fun RegisterScreen(navController: NavController) {
                             authService.register(request).enqueue(object : Callback<Void> {
                                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                                     if (response.isSuccessful) {
-                                        Toast.makeText(context, "Rejestracja zakończona sukcesem", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, "Registration successful", Toast.LENGTH_SHORT).show()
                                         navController.navigate("login")
                                     } else {
-                                        Toast.makeText(context, "Błąd rejestracji", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, "Registration error", Toast.LENGTH_SHORT).show()
                                     }
                                 }
 
                                 override fun onFailure(call: Call<Void>, t: Throwable) {
-                                    Toast.makeText(context, "Błąd sieci", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, "Network error", Toast.LENGTH_SHORT).show()
                                 }
                             })
                         },
@@ -122,19 +122,17 @@ fun RegisterScreen(navController: NavController) {
                     ) {
                         Icon(Icons.Default.PersonAdd, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Zarejestruj się")
+                        Text("Register")
                     }
 
                     TextButton(
                         onClick = { navController.navigate("login") },
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
-                        Text("Masz już konto? Zaloguj się")
+                        Text("Already have an account? Log in")
                     }
                 }
             }
         }
     }
 }
-
-

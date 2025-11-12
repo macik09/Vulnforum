@@ -6,5 +6,5 @@ import androidx.navigation.NavController
 
 @Composable
 fun ChallengesScreen(navController: NavController) {
-    Text("Ekran Wzywań")
+    Text("Challenge Screen")
 }

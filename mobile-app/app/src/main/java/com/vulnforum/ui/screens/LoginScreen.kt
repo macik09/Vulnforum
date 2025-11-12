@@ -80,7 +80,7 @@ fun LoginScreen(navController: NavController) {
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         Text(
-                            "Logowanie",
+                            "Login",
                             style = MaterialTheme.typography.headlineSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -88,7 +88,7 @@ fun LoginScreen(navController: NavController) {
                         OutlinedTextField(
                             value = username,
                             onValueChange = { username = it },
-                            label = { Text("Nazwa użytkownika") },
+                            label = { Text("Username") },
                             leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
                             singleLine = true,
                             modifier = Modifier.fillMaxWidth()
@@ -97,7 +97,7 @@ fun LoginScreen(navController: NavController) {
                         OutlinedTextField(
                             value = password,
                             onValueChange = { password = it },
-                            label = { Text("Hasło") },
+                            label = { Text("Password") },
                             visualTransformation = PasswordVisualTransformation(),
                             leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
                             singleLine = true,
@@ -139,7 +139,7 @@ fun LoginScreen(navController: NavController) {
                                             } else {
                                                 Toast.makeText(
                                                     context,
-                                                    "Błędne dane logowania",
+                                                    "Invalid login credentials",
                                                     Toast.LENGTH_SHORT
                                                 ).show()
                                             }
@@ -151,7 +151,7 @@ fun LoginScreen(navController: NavController) {
                                         ) {
                                             Toast.makeText(
                                                 context,
-                                                "Błąd sieci",
+                                                "Network error",
                                                 Toast.LENGTH_SHORT
                                             ).show()
                                         }
@@ -164,14 +164,14 @@ fun LoginScreen(navController: NavController) {
                         ) {
                             Icon(Icons.Default.Login, contentDescription = null)
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Zaloguj się")
+                            Text("Log in")
                         }
 
                         TextButton(
                             onClick = { navController.navigate("register") },
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         ) {
-                            Text("Nie masz konta? Zarejestruj się")
+                            Text("Don't have an account? Register")
                         }
                     }
                 }

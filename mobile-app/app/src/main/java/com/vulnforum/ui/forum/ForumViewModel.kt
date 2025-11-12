@@ -56,23 +56,23 @@ class ForumViewModel(
                             onSuccess()
                         } else {
                             val errorBody = unlockResponse.errorBody()?.string()
-                            _errorMessage.value = "Nie udało się odblokować artykułu: ${unlockResponse.code()} ${errorBody ?: "Nieznany błąd"}"
+                            _errorMessage.value = "Failed to unlock article: ${unlockResponse.code()} ${errorBody ?: "Unknown error"}"
                         }
                     } else if (lastReceivedAccessKey == null) {
-                        _errorMessage.value = "Błąd: Serwer nie zwrócił klucza dostępu po zakupie."
+                        _errorMessage.value = "Error: Server did not return an access key after purchase."
                     } else {
-                        _errorMessage.value = purchaseBody?.message ?: "Za mało vulndolców na zakup artykułu."
+                        _errorMessage.value = purchaseBody?.message ?: "Insufficient vulndollars to purchase the article."
                     }
                 } else {
                     val errorBody = purchaseRetrofitResponse.errorBody()?.string()
-                    _errorMessage.value = "Błąd zakupu: ${purchaseRetrofitResponse.code()} ${errorBody ?: "Nieznany błąd"}"
+                    _errorMessage.value = "Purchase error: ${purchaseRetrofitResponse.code()} ${errorBody ?: "Unknown error"}"
                 }
             } catch (e: HttpException) {
-                _errorMessage.value = "Błąd komunikacji HTTP: ${e.code()} - ${e.message()}"
+                _errorMessage.value = "HTTP communication error: ${e.code()} - ${e.message()}"
             } catch (e: IOException) {
-                _errorMessage.value = "Błąd połączenia sieciowego: ${e.message}"
+                _errorMessage.value = "Network connection error: ${e.message}"
             } catch (e: Exception) {
-                _errorMessage.value = "Wystąpił nieoczekiwany błąd: ${e.message}"
+                _errorMessage.value = "An unexpected error occurred: ${e.message}"
             }
         }
     }
@@ -83,7 +83,7 @@ class ForumViewModel(
                 val fetchedArticles = articleService.getArticles()
                 _articles.value = fetchedArticles
             } catch (e: Exception) {
-                _errorMessage.value = "Nie udało się pobrać artykułów."
+                _errorMessage.value = "Failed to fetch articles."
             }
         }
     }

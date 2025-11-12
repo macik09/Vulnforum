@@ -36,18 +36,18 @@ class DeeplinkAddFundsActivity : ComponentActivity() {
                     val response = walletService.addFunds(AddFundsRequest(amount, nonce))
 
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(context, "Dodano $amount vulndolców!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "Added $amount vulndollars!", Toast.LENGTH_LONG).show()
                         finish()
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(context, "Błąd API: ${e.message}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "API error: ${e.message}", Toast.LENGTH_LONG).show()
                         finish()
                     }
                 }
             }
         } else {
-            Toast.makeText(this, "Nieprawidłowy deeplink lub brak tokena", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Invalid deeplink or missing token", Toast.LENGTH_LONG).show()
             finish()
         }
     }

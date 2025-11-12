@@ -16,22 +16,23 @@ class ComposeMessageViewModel(private val messageService: MessageService) : View
 
     fun sendMessage(sender: String, recipient: String, content: String) {
         val message = Message(
-            id = 0,  
+            id = 0,  // The backend assigns the real ID
             sender = sender,
             recipient = recipient,
             content = content,
             timestamp = ""
         )
+
         viewModelScope.launch {
             try {
                 val response = messageService.sendMessage(message).awaitResponse()
-                if (response.isSuccessful) {
-                    _sendStatus.value = "Wiadomość wysłana!"
+                _sendStatus.value = if (response.isSuccessful) {
+                    "Message sent successfully!"
                 } else {
-                    _sendStatus.value = "Błąd wysyłania"
+                    "Failed to send message"
                 }
             } catch (e: Exception) {
-                _sendStatus.value = "Błąd sieci: ${e.message}"
+                _sendStatus.value = "Network error: ${e.message}"
             }
         }
     }

@@ -13,7 +13,7 @@ def verify_admin_role():
     claims = get_jwt()
     if claims.get("role") != "admin":
         logger.warning(f"Access denied: User with role '{claims.get('role', 'N/A')}' tried to access admin endpoint.")
-        return False, jsonify({"error": "Dostęp zabroniony. Wymagane uprawnienia administratora."}), 403
+        return False, jsonify({"error": "Access forbidden. Admin privileges required."}), 403
     return True, None, None 
 
 @admin_bp.route('/articles/<int:article_id>', methods=['PATCH'])
@@ -26,18 +26,18 @@ def update_article(article_id):
 
     article = Article.query.get(article_id)
     if not article:
-        return jsonify({"error": "Nie znaleziono artykułu"}), 404
+        return jsonify({"error": "Article not found"}), 404
 
     data = request.get_json()
     is_paid = data.get("is_paid")
 
     if is_paid is None:
-        return jsonify({"error": "Brak wartości is_paid"}), 400
+        return jsonify({"error": "Missing 'is_paid' value"}), 400
 
     article.is_paid = bool(is_paid)
     db.session.commit()
 
-    return jsonify({"message": "Zaktualizowano artykuł", "is_paid": article.is_paid}), 200
+    return jsonify({"message": "Article updated", "is_paid": article.is_paid}), 200
 
 @admin_bp.route('/users', methods=['GET'])
 @jwt_required()

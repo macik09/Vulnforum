@@ -121,7 +121,7 @@ fun ArticleDetailScreen(
 
     LaunchedEffect(error) {
         error?.let {
-            Toast.makeText(context, "Błąd: $it", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Error: $it", Toast.LENGTH_LONG).show()
             error = null
         }
     }
@@ -132,14 +132,14 @@ fun ArticleDetailScreen(
                 SmallTopAppBar(
                     title = {
                         Text(
-                            article?.title ?: "Artykuł",
+                            article?.title ?: "Article",
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                     },
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = "Powrót")
+                            Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                         }
                     }
                 )
@@ -157,7 +157,7 @@ fun ArticleDetailScreen(
                     isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator()
                     }
-                    error != null -> Text("Błąd: $error", color = MaterialTheme.colorScheme.error)
+                    error != null -> Text("Error: $error", color = MaterialTheme.colorScheme.error)
                     article != null -> {
                         Text(
                             text = article!!.content,
@@ -176,7 +176,7 @@ fun ArticleDetailScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                "Komentarze (${comments.size})",
+                                "Comments (${comments.size})",
                                 style = MaterialTheme.typography.titleMedium,
                                 modifier = Modifier.weight(1f)
                             )
@@ -189,7 +189,7 @@ fun ArticleDetailScreen(
                         AnimatedVisibility(commentsExpanded) {
                             Column {
                                 if (comments.isEmpty()) {
-                                    Text("Brak komentarzy", style = MaterialTheme.typography.bodyMedium)
+                                    Text("No comments", style = MaterialTheme.typography.bodyMedium)
                                 } else {
                                     LazyColumn(
                                         modifier = Modifier
@@ -221,12 +221,12 @@ fun ArticleDetailScreen(
                                                                 webViewClient = object : WebViewClient() {
                                                                     override fun onPageFinished(view: WebView?, url: String?) {
                                                                         super.onPageFinished(view, url)
-                                                                        Log.d("WebViewDebug", "onPageFinished dla URL: $url")
+                                                                        Log.d("WebViewDebug", "onPageFinished for URL: $url")
                                                                     }
 
                                                                     override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
                                                                         super.onReceivedError(view, request, error)
-                                                                        Log.e("WebViewError", "Błąd ładowania WebView: ${error?.description}")
+                                                                        Log.e("WebViewError", "WebView loading error: ${error?.description}")
                                                                     }
                                                                 }
 
@@ -251,11 +251,11 @@ fun ArticleDetailScreen(
                                                             Handler(Looper.getMainLooper()).postDelayed({
                                                                 if (token != null) {
                                                                     webView.evaluateJavascript("localStorage.setItem('token', '$token');") { result ->
-                                                                        Log.d("WebViewDebug", "Wstrzyknięto token do localStorage.")
+                                                                        Log.d("WebViewDebug", "Token injected into localStorage.")
 
                                                                     }
                                                                 } else {
-                                                                    Log.w("WebViewDebug", "Token null, nie wstrzyknięto do localStorage.")
+                                                                    Log.w("WebViewDebug", "Token null, not injected into localStorage.")
                                                                 }
                                                             }, 150)
 
@@ -289,12 +289,12 @@ fun ArticleDetailScreen(
                         Divider()
                         Spacer(Modifier.height(16.dp))
 
-                        Text("Dodaj komentarz", style = MaterialTheme.typography.titleMedium)
+                        Text("Add a comment", style = MaterialTheme.typography.titleMedium)
 
                         OutlinedTextField(
                             value = commentText,
                             onValueChange = { commentText = it },
-                            label = { Text("Treść komentarza") },
+                            label = { Text("Comment content") },
                             modifier = Modifier.fillMaxWidth(),
                             maxLines = 4,
                             shape = RoundedCornerShape(12.dp)
@@ -307,7 +307,7 @@ fun ArticleDetailScreen(
                                 if (commentText.isBlank()) {
                                     Toast.makeText(
                                         context,
-                                        "Komentarz nie może być pusty",
+                                        "Comment cannot be empty",
                                         Toast.LENGTH_SHORT
                                     ).show()
                                     return@Button
@@ -319,23 +319,23 @@ fun ArticleDetailScreen(
                                     .enqueue(object : Callback<Void> {
                                         override fun onResponse(call: Call<Void>, response: Response<Void>) {
                                             if (response.isSuccessful) {
-                                                Toast.makeText(context, "Dodano komentarz", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(context, "Comment added", Toast.LENGTH_SHORT).show()
                                                 commentText = ""
                                                 refreshComments()
                                             } else {
-                                                Toast.makeText(context, "Błąd zapisu", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(context, "Save error", Toast.LENGTH_SHORT).show()
                                             }
                                         }
 
                                         override fun onFailure(call: Call<Void>, t: Throwable) {
-                                            Toast.makeText(context, "Błąd sieci", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, "Network error", Toast.LENGTH_SHORT).show()
                                         }
                                     })
                             },
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text("Dodaj komentarz")
+                            Text("Add comment")
                         }
                     }
                 }

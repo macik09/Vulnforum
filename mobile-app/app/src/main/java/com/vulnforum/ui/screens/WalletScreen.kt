@@ -55,7 +55,7 @@ fun WalletScreen(
     val balance by walletViewModel.balance.collectAsState()
     val context = LocalContext.current
     val sessionManager = SessionManager(context)
-    val username = sessionManager.getUsername() ?: "Użytkownik"
+    val username = sessionManager.getUsername() ?: "User"
 
     val currentOnResume by rememberUpdatedState(newValue = {
         walletViewModel.fetchBalance()
@@ -78,7 +78,7 @@ fun WalletScreen(
                 CenterAlignedTopAppBar(
                     title = {
                         Text(
-                            "Portfel $username",
+                            "Wallet $username",
                             style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -87,7 +87,7 @@ fun WalletScreen(
                         IconButton(onClick = { navController.popBackStack() }) {
                             Icon(
                                 imageVector = Icons.Default.ArrowBack,
-                                contentDescription = "Wróć",
+                                contentDescription = "Back",
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -110,7 +110,7 @@ fun WalletScreen(
                 verticalArrangement = Arrangement.Top
             ) {
                 Text(
-                    text = "Saldo",
+                    text = "Balance",
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Medium),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(bottom = 24.dp)
@@ -123,7 +123,7 @@ fun WalletScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.AccountBalanceWallet,
-                        contentDescription = "Ikona portfela",
+                        contentDescription = "Wallet icon",
                         modifier = Modifier.size(120.dp),
                         tint = MaterialTheme.colorScheme.primary
                     )
@@ -146,7 +146,7 @@ fun WalletScreen(
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "vulndolców",
+                                text = "vulndollars",
                                 style = MaterialTheme.typography.bodyMedium.copy(
                                     color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
                                 )
@@ -169,12 +169,12 @@ fun WalletScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.AddShoppingCart,
-                        contentDescription = "Kup vulndolce",
+                        contentDescription = "Buy vulndollars",
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        "Kup vulndolce",
+                        "Buy vulndollars",
                         style = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.onPrimary)
                     )
                 }
@@ -182,6 +182,7 @@ fun WalletScreen(
         }
     }
 }
+
 @Composable
 fun LoadingBalancePlaceholder(size: Dp = 80.dp) {
     val infiniteTransition = rememberInfiniteTransition()

@@ -1,11 +1,3 @@
-
-import os
-from flask import Blueprint, request, jsonify, current_app
-from werkzeug.utils import secure_filename
-from app.models.models import db, Comment, Article
-
-comments_bp = Blueprint('comments', __name__, url_prefix='/api')
-
 import os
 from flask import Blueprint, request, jsonify, current_app, make_response
 from werkzeug.utils import secure_filename
@@ -23,7 +15,7 @@ def add_comment(article_id):
         return response
 
     if "text" not in request.form:
-        return jsonify({"error": "Brakuje pola tekstowego"}), 400
+        return jsonify({"error": "Missing text field"}), 400
 
     text = request.form["text"]
     article = Article.query.get_or_404(article_id)
@@ -48,7 +40,7 @@ def add_comment(article_id):
     db.session.add(comment)
     db.session.commit()
 
-    response = jsonify({"message": "Komentarz dodany"}), 201
+    response = jsonify({"message": "Comment added"}), 201
     response[0].headers.add("Access-Control-Allow-Origin", "*")
     return response
 
@@ -64,4 +56,3 @@ def get_comments(article_id):
         } for c in comments
     ]
     return jsonify(result), 200
-

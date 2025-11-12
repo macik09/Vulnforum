@@ -89,13 +89,13 @@ fun PaywallScreenContent(
                         modifier = Modifier.size(28.dp)
                     )
                     Spacer(Modifier.width(8.dp))
-                    Text("Błąd płatności", style = MaterialTheme.typography.titleMedium)
+                    Text("Payment Error", style = MaterialTheme.typography.titleMedium)
                 }
             },
             text = {
                 Text(
-                    "Nie masz wystarczającej ilości vulndolców, aby odblokować ten artykuł.\n" +
-                            "Proszę doładuj portfel lub wybierz inny artykuł.",
+                    "You do not have enough vulndollars to unlock this article.\n" +
+                            "Please top up your wallet or choose another article.",
                     style = MaterialTheme.typography.bodyMedium
                 )
             },
@@ -113,7 +113,7 @@ fun PaywallScreenContent(
                     viewModel.clearError()
                     navController.popBackStack()
                 }) {
-                    Text("Anuluj")
+                    Text("Cancel")
                 }
             }
         )
@@ -122,10 +122,10 @@ fun PaywallScreenContent(
     Scaffold(
         topBar = {
             SmallTopAppBar(
-                title = { Text("Płatność") },
+                title = { Text("Payment") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Powrót")
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -136,7 +136,6 @@ fun PaywallScreenContent(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
@@ -161,13 +160,13 @@ fun PaywallScreenContent(
                     modifier = Modifier.fillMaxWidth(0.9f)
                 ) {
                     Text(
-                        "Ten artykuł kosztuje",
+                        "This article costs",
                         style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        "10 000 vulndolców",
+                        "10,000 vulndollars",
                         style = MaterialTheme.typography.headlineMedium.copy(
                             fontWeight = FontWeight.ExtraBold,
                             color = MaterialTheme.colorScheme.primary
@@ -175,13 +174,12 @@ fun PaywallScreenContent(
                     )
                     Spacer(Modifier.height(16.dp))
                     Text(
-                        "Aby uzyskać dostęp, kliknij przycisk poniżej i zapłać.",
+                        "To access it, click the button below and pay.",
                         style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(Modifier.height(32.dp))
-
 
                     var pressed by remember { mutableStateOf(false) }
                     val scale by animateFloatAsState(targetValue = if (pressed) 0.95f else 1f)
@@ -209,7 +207,7 @@ fun PaywallScreenContent(
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                     ) {
                         Text(
-                            "Zapłać teraz",
+                            "Pay Now",
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onPrimary
                         )

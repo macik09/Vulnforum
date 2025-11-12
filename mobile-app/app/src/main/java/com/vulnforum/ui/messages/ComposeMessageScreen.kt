@@ -38,7 +38,7 @@ fun ComposeMessageScreen(
                 SmallTopAppBar(
                     title = {
                         Text(
-                            "Nowa wiadomość",
+                            "New Message",
                             style = MaterialTheme.typography.titleLarge.copy(
                                 color = MaterialTheme.colorScheme.onSurface
                             )
@@ -48,7 +48,7 @@ fun ComposeMessageScreen(
                         IconButton(onClick = { navController.popBackStack() }) {
                             Icon(
                                 Icons.Default.ArrowBack,
-                                contentDescription = "Powrót",
+                                contentDescription = "Back",
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
@@ -73,7 +73,7 @@ fun ComposeMessageScreen(
                     value = recipient,
                     onValueChange = { recipient = it },
                     label = {
-                        Text("Odbiorca", color = MaterialTheme.colorScheme.secondary)
+                        Text("Recipient", color = MaterialTheme.colorScheme.secondary)
                     },
                     singleLine = true,
                     colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -90,7 +90,7 @@ fun ComposeMessageScreen(
                     value = content,
                     onValueChange = { content = it },
                     label = {
-                        Text("Treść wiadomości", color = MaterialTheme.colorScheme.secondary)
+                        Text("Message content", color = MaterialTheme.colorScheme.secondary)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -114,7 +114,7 @@ fun ComposeMessageScreen(
                     ),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Wyślij", style = MaterialTheme.typography.titleMedium)
+                    Text("Send", style = MaterialTheme.typography.titleMedium)
                 }
 
                 sendStatus?.let { status ->

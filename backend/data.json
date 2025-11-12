@@ -1,95 +1,147 @@
 {
-  "users": [
-    {"username": "alice", "password": "pass123", "role": "user", "wallet_balance": 100.0},
-    {"username": "bob", "password": "pass456", "role": "admin", "wallet_balance": 250.0},
-    {"username": "john", "password": "johnpass", "role": "user", "wallet_balance": 75.0},
-    {"username": "eve", "password": "evilpass", "role": "user", "wallet_balance": 30.0}
-  ],
-  "articles": [
-    {
-      "title": "Jak zacząć testowanie bezpieczeństwa aplikacji mobilnych",
-      "content": "Testowanie bezpieczeństwa aplikacji mobilnych to kluczowa umiejętność w świecie bezpieczeństwa IT, szczególnie w dobie powszechnego korzystania ze smartfonów. Na początek warto zrozumieć podstawowe różnice między aplikacjami webowymi a mobilnymi. Aplikacje mobilne mają lokalne komponenty, takie jak bazy danych SQLite, pliki SharedPreferences, czy systemy uprawnień zależne od systemu operacyjnego. \n\n**Kroki startowe:**\n\n1. **Przygotuj środowisko:** Zainstaluj emulator (np. AVD z Android Studio) lub korzystaj z fizycznego urządzenia z rootem. Przydadzą się także narzędzia takie jak `adb`, `Frida`, `Burp Suite`, `MobSF`, `APKTool`.\n\n2. **Analiza statyczna:** Rozpakuj aplikację (`.apk`) i przyjrzyj się strukturze kodu. Sprawdź manifest, użyte uprawnienia, eksportowane komponenty, oraz biblioteki trzecie.\n\n3. **Analiza dynamiczna:** Obserwuj zachowanie aplikacji podczas działania. Przechwytuj ruch sieciowy, testuj reakcję na manipulację parametrami i modyfikację środowiska.\n\n4. **Podstawowe wektory ataku:**\n   - Niewłaściwe przechowywanie danych\n   - Brak zabezpieczenia komunikacji sieciowej (np. brak HTTPS, brak cert pinningu)\n   - Niezabezpieczone komponenty aplikacji (deeplinki, aktywności, broadcasty)\n\n5. **Czerp z OWASP MASVS i MSTG:** To oficjalne wytyczne i podręczniki do testów bezpieczeństwa aplikacji mobilnych. Używaj ich jako checklisty.\n\nRozpoczynając przygodę z testowaniem aplikacji mobilnych, warto ćwiczyć na podatnych środowiskach takich jak ta aplikacja – VulnForum. To najlepszy sposób na rozwijanie umiejętności w bezpiecznych warunkach.",
-      "is_paid": false
-    }
-    ,
-    {
-      "title": "Eksploatacja XSS na przykładzie podatnych aplikacji",
-      "content": "Cross-Site Scripting (XSS) to jedna z najczęstszych podatności występujących w aplikacjach webowych i mobilnych korzystających z webview lub dynamicznego HTML-a. W tym artykule przeanalizujemy, jak działa XSS, jakie są jego typy oraz jak można go wykorzystać na przykładzie podatnych aplikacji takich jak VulnForum.\n\n**Rodzaje XSS:**\n\n1. **Stored XSS (utrwalony)** – złośliwy kod jest zapisany w bazie danych i wykonywany za każdym razem, gdy ofiara odwiedza zainfekowaną stronę. Idealny do ataków na fora i systemy komentarzy.\n\n2. **Reflected XSS (odbijany)** – kod JavaScript jest odzwierciedlany w odpowiedzi serwera, np. przez parametr URL. Wymaga kliknięcia przez użytkownika.\n\n3. **DOM-based XSS** – kod złośliwy jest wstrzykiwany bez udziału serwera, wyłącznie przez manipulację DOM po stronie klienta.\n\n**Przykład z VulnForum:**\nW aplikacji użytkownik może dodać komentarz do artykułu. Brak filtrowania HTML pozwala na dodanie takiego payloadu:\n\n```html\n<h1 style=\"color:red\">XSS działa!</h1><script>alert('Pwned!')</script>\n```\n\nPo zapisaniu komentarza, kod ten zostanie wykonany u każdego, kto go odczyta. To klasyczny przykład Stored XSS.\n\n**Skutki XSS:**\n- Kradzież ciasteczek / tokenów\n- Podszywanie się pod użytkownika (session hijacking)\n- Defacement (zmiana treści)\n- Automatyczne wykonanie działań (np. kliknięcie przycisków)\n\n**Jak się chronić?**\n- Stosowanie odpowiedniego kodowania danych w HTML (np. `&lt;`, `&gt;`, `&amp;`)\n- Filtracja i walidacja danych wejściowych\n- Korzystanie z bibliotek typu DOMPurify do czyszczenia HTML\n\nEksploatacja XSS to nie tylko pokaz slajdów z alertami. W rzeczywistości prowadzi do przejęć kont, manipulacji interfejsem oraz trwałego osadzenia złośliwego kodu. Dzięki aplikacjom takim jak VulnForum możesz bezpiecznie przećwiczyć wykrywanie i wykorzystanie tej podatności.",
-      "is_paid": true
-    }
-    ,
-    {
-      "title": "Bezpieczne przechowywanie danych na Androidzie – dobre praktyki",
-      "content": "W aplikacjach mobilnych przechowywanie danych lokalnie jest nieuniknione – mogą to być tokeny dostępu, preferencje użytkownika, tymczasowe pliki lub inne wrażliwe informacje. Niestety, wiele aplikacji robi to w sposób niebezpieczny, co ułatwia ataki typu reverse engineering, kradzież danych czy eskalację uprawnień.\n\n**Typowe błędy:**\n- Zapisywanie haseł lub tokenów w `SharedPreferences` bez szyfrowania\n- Trzymanie danych w `internal storage` bez zabezpieczeń\n- Logowanie wrażliwych danych (np. pełne odpowiedzi z API, JWT, hasła)\n- Użycie zewnętrznych kart pamięci (SD) do przechowywania danych bez kontroli dostępu\n\n**Dobre praktyki:**\n\n1. **Używaj EncryptedSharedPreferences lub EncryptedFile:**\n   Android Jetpack Security oferuje gotowe klasy do szyfrowania danych w pamięci aplikacji. Klucze są bezpiecznie trzymane w Android Keystore.\n\n2. **Unikaj przechowywania tokenów długoterminowych:**\n   Jeżeli nie jest to konieczne, preferuj sesje krótkoterminowe lub odświeżane dynamicznie z backendu.\n\n3. **Nie loguj danych wrażliwych:**\n   Logi mogą być dostępne dla innych aplikacji (np. przy root), a nawet przez `logcat`. Loguj tylko dane niezbędne do debugowania, nigdy dane prywatne.\n\n4. **Stosuj Internal Storage z ograniczonym dostępem:**\n   Dane zapisywane w kontekście prywatnym aplikacji (`MODE_PRIVATE`) nie są dostępne dla innych aplikacji, nawet przy braku root.\n\n5. **Rozważ użycie Keystore API:**\n   Android Keystore pozwala na tworzenie i używanie kluczy kryptograficznych, bez ujawniania ich treści aplikacji. Możesz np. podpisać lub odszyfrować dane bez bezpośredniego dostępu do klucza.\n\n**Przykład podatności w VulnForum:**\nW aplikacji VulnForum dane uwierzytelniające są zapisywane w SharedPreferences w formie zwykłego tekstu (plaintext), co czyni je łatwym celem dla każdego z dostępem do plików aplikacji.\n\nDobre przechowywanie danych to fundament mobilnego bezpieczeństwa. Nawet najlepiej zabezpieczona komunikacja z API traci sens, jeśli token zostanie wykradziony z pamięci urządzenia.",
-      "is_paid": false
-    },
-    {
-      "title": "Jak złamać JWT – analiza tokenów i ich słabości",
-      "content": "JSON Web Tokens (JWT) są popularnym sposobem autoryzacji użytkowników w aplikacjach webowych i mobilnych. Ich struktura, oparta na podpisie, wydaje się bezpieczna – jednak błędna implementacja może prowadzić do poważnych naruszeń bezpieczeństwa.\n\n### 🔍 Struktura JWT\nToken JWT składa się z trzech części oddzielonych kropkami:\n\n```\nHEADER.PAYLOAD.SIGNATURE\n```\n\n- **Header** – zawiera typ tokenu i algorytm podpisu (np. HS256)\n- **Payload** – dane użytkownika (np. id, rola, czas wygaśnięcia)\n- **Signature** – podpis HMAC lub RSA, który zapewnia integralność\n\n### ⚠️ Typowe słabości JWT\n\n1. **Brak weryfikacji podpisu**\n   - Backend przyjmuje tokeny bez sprawdzania podpisu (często w testowych implementacjach)\n   - Pozwala to na podmianę payloadu i eskalację uprawnień (np. `\"role\": \"admin\"`)\n\n2. **Użycie algorytmu \"none\"**\n   - W starszych bibliotekach możliwe było przesłanie `alg: none` w headerze – oznacza to brak podpisu. Część serwerów akceptowała takie tokeny!\n\n3. **Słaby lub znany sekret (HS256)**\n   - Podpis JWT z HMAC można złamać brute-force’em, jeśli sekret jest zbyt prosty (np. „12345”)\n   - Narzędzia takie jak `jwt-cracker` mogą szybko sprawdzić popularne hasła\n\n4. **Brak rotacji i wygasania tokenów**\n   - Token ważny przez kilka dni? Jeśli wycieknie – atakujący ma sporo czasu.\n   - Brak odświeżania i mechanizmów „token revocation” to prosta droga do nadużyć.\n\n5. **Zbyt dużo danych w payloadzie**\n   - Wrażliwe informacje w payloadzie mogą zostać łatwo odczytane – JWT nie jest szyfrowany, tylko kodowany base64!\n\n### 🧪 Przykład z VulnForum\nW VulnForum JWT jest podpisany algorytmem HS256 z bardzo słabym sekretem – łatwym do złamania. Po jego odszyfrowaniu możesz:\n- Zmienić `\"role\": \"user\"` na `\"admin\"`\n- Ustawić datę wygaśnięcia daleko w przyszłość\n- Wysłać token do API i otrzymać dostęp administracyjny\n\n### 🛡️ Jak się bronić\n- Używaj silnych, długich sekretów\n- Waliduj podpis zawsze, niezależnie od headera\n- Nigdy nie używaj algorytmu \"none\"\n- Rozważ JWT z RSA/ECDSA, jeśli masz możliwość zarządzania kluczami\n- Przechowuj wrażliwe dane po stronie serwera, nie w payloadzie JWT\n\nJWT to potężne narzędzie – ale tylko, gdy jest poprawnie używane.",
-      "is_paid": true
-    }
-    ,
-    {
-      "title": "Reverse engineering APK krok po kroku",
-      "content": "Reverse engineering aplikacji Android pozwala na analizę działania aplikacji bez dostępu do jej kodu źródłowego. To przydatna umiejętność zarówno dla pentesterów, jak i dla researcherów bezpieczeństwa.\n\n### 🔧 Czego potrzebujesz\n\n- `apktool` – do dekompilacji APK do formatu smali\n- `jadx` lub `jeb` – do przeglądania kodu w stylu Java\n- `Frida`, `Xposed`, `Objection` – do dynamicznej analizy\n- Emulator lub fizyczne urządzenie z rootem/debug mode\n\n### 📦 Etap 1 – Dekompilacja APK\nZacznij od rozpakowania paczki APK:\n\n```bash\napktool d VulnForum.apk -o VulnForum_decoded\n```\n\nZawartość folderu pokaże strukturę aplikacji: layouty, AndroidManifest, smali.\n\n### 🔍 Etap 2 – Analiza statyczna\nUżyj `jadx-gui`, by przejrzeć kod zrekonstruowany do Java:\n\n```bash\njadx-gui VulnForum.apk\n```\n\nSzukaj:\n- Hardcodowanych tokenów/API kluczy\n- Niewłaściwego szyfrowania\n- Eksportowanych aktywności (`exported=\"true\"` w manifest)\n\n### 🧪 Etap 3 – Analiza dynamiczna\nZainstaluj aplikację na emulatorze i podłącz Fridę:\n\n```bash\nfrida-ps -U | grep VulnForum\n```\n\nMożesz hookować funkcje, monitorować metody logowania, dekodowania JWT itd. Np.:\n\n```javascript\nJava.perform(() => {\n  const AuthClass = Java.use(\"com.vulnforum.auth.AuthUtils\");\n  AuthClass.verifyToken.implementation = function(token) {\n    console.log(\"Intercepted token:\", token);\n    return this.verifyToken(token);\n  };\n});\n```\n\n### 💡 Praktyczne cele w VulnForum\n- Zlokalizuj szyfrowanie wiadomości i spróbuj je odszyfrować\n- Zidentyfikuj funkcje walidujące płatności i zmodyfikuj je\n- Namierz ukryte/deeplinkowane aktywności i uruchom je ręcznie\n\n### 🛡️ Wskazówki bezpieczeństwa\n- Unikaj hardkodowanych sekretów\n- Używaj proguard/obfuskacji\n- Stosuj bezpieczeństwo wielowarstwowe – nie ufaj klientowi\n\nReverse engineering to podstawowe narzędzie ofensywne, ale i świetny sposób na sprawdzenie jakości własnej aplikacji.",
-      "is_paid": false
-    }
-    ,
-    {
-      "title": "Ataki na deeplinki i przejmowanie danych użytkowników",
-      "content": "Deeplinki to mechanizm pozwalający aplikacjom mobilnym reagować na specjalnie skonstruowane adresy URL (np. `vulnforum://article/5`). Choć są bardzo przydatne, ich nieprawidłowa konfiguracja może prowadzić do poważnych naruszeń bezpieczeństwa.\n\n### 🚨 Zagrożenia związane z deeplinkami\n\n1. **Nieautoryzowany dostęp do funkcji** – jeśli deeplink prowadzi do wrażliwego ekranu bez weryfikacji sesji/logowania.\n2. **Intent hijacking** – inna złośliwa aplikacja może przechwycić deeplink, jeśli aplikacja nie definiuje poprawnie filtrów `intent-filter` lub nie używa `android:exported=\"false\"`.\n3. **Injection poprzez parametry URL** – niektóre aplikacje wstrzykują parametry z deeplinka bez odpowiedniego filtrowania (np. do WebView lub zapytań SQL).\n\n### 🔧 Jak wygląda podatność w praktyce\nWyobraźmy sobie deeplinka:\n\n```\nvulnforum://message/send?to=bob&text=hello\n```\n\nJeśli aplikacja:\n- nie sprawdza, kto wysyła wiadomość,\n- nie ogranicza kto może użyć tego deeplinka,\n\n...wtedy dowolna inna aplikacja może wywołać taki link i wysłać wiadomość w imieniu użytkownika.\n\n### 🧪 Testowanie podatności\n\nW Android Studio możesz przetestować deeplink tak:\n```bash\nadb shell am start -a android.intent.action.VIEW -d \"vulnforum://article/2\"\n```\n\nMożna też przygotować własną aplikację, która otwiera podatne linki do VulnForum.\n\n### 🛡️ Dobre praktyki\n\n- **Walidacja autoryzacji** – nawet jeśli deeplink wskazuje na aktywność, wymuś uwierzytelnienie w kodzie.\n- **Ustaw `android:exported=\"false\"`** – ogranicza dostęp do wewnętrznych komponentów.\n- **Używaj `IntentFilter` ostrożnie** – tylko tam, gdzie to konieczne.\n- **Filtrowanie danych wejściowych** – nigdy nie ufaj parametrom z deeplinków.\n\n### 💥 VulnForum i deeplinki\nW aplikacji VulnForum zaimplementowano kilka aktywności podatnych na atak przez deeplinki. Spróbuj:\n- Wysłać wiadomość z uprawnieniami innego użytkownika\n- Uzyskać dostęp do płatnych treści bez płatności\n- Ominięcie ekranów logowania\n\nAtaki na deeplinki to świetny wstęp do łańcuchów exploitacyjnych, zwłaszcza w połączeniu z innymi podatnościami jak brak autoryzacji lub słabe uwierzytelnianie.",
-      "is_paid": true
-    }
-    
-  ]
-  ,
-  "unlocked_articles": [
-    { "username": "alice", "article_title": "Jak złamać JWT – analiza tokenów i ich słabości" },
-    { "username": "alice", "article_title": "Reverse engineering APK krok po kroku" },
-    { "username": "bob",   "article_title": "Ataki na deeplinki i przejmowanie danych użytkowników" },
-    { "username": "john",  "article_title": "Reverse engineering APK krok po kroku" },
-    { "username": "john",  "article_title": "Atakowanie aplikacji mobilnych przez logi i debug output" },
-    { "username": "john",  "article_title": "Analiza ruchu sieciowego w aplikacjach mobilnych" },
-    { "username": "eve",   "article_title": "Ataki na deeplinki i przejmowanie danych użytkowników" },
-    { "username": "eve",   "article_title": "Zarządzanie sesją i bezpieczeństwo tokenów" },
-    { "username": "eve",   "article_title": "Ochrona prywatności użytkownika w aplikacjach mobilnych" }
-  ],
-  "messages": [
-    {"sender": "alice", "receiver": "bob", "content": "Cześć Bob!"},
-    {"sender": "john", "receiver": "alice", "content": "Masz chwilę na pytanie?"},
-    {"sender": "eve", "receiver": "john", "content": "Sprawdź ten artykuł!"}
-  ],
-  "comments": [
-    {
-      "text": "Super artykuł! Świetny punkt startowy dla początkujących.",
-      "file_path": null,
-      "article_title": "Jak zacząć testowanie bezpieczeństwa aplikacji mobilnych"
-    },
-    {
-      "text": "Nie zgadzam się z tą metodą ataku – istnieją lepsze sposoby.",
-      "file_path": null,
-      "article_title": "Jak złamać JWT – analiza tokenów i ich słabości"
-    },
-    {
-      "text": "Więcej źródeł proszę, szczególnie dotyczących nadużyć deeplinków.",
-      "file_path": null,
-      "article_title": "Ataki na deeplinki i przejmowanie danych użytkowników"
-    },
-    {
-      "text": "Trochę nudne. Może warto dodać przykłady kodu?",
-      "file_path": null,
-      "article_title": "Bezpieczne przechowywanie danych na Androidzie – dobre praktyki"
-    },
-    {
-      "text": "Świetnie napisane! Reverse engineering wreszcie zrozumiały.",
-      "file_path": null,
-      "article_title": "Reverse engineering APK krok po kroku"
-    },
-    {
-      "text": "Dzięki za info! Proszę o więcej materiałów o XSS.",
-      "file_path": null,
-      "article_title": "Eksploatacja XSS na przykładzie podatnych aplikacji"
-    }
-  ]
-  
+    "users": [
+        {
+            "username": "alice",
+            "password": "pass123",
+            "role": "user",
+            "wallet_balance": 100
+        },
+        {
+            "username": "bob",
+            "password": "pass456",
+            "role": "admin",
+            "wallet_balance": 250
+        },
+        {
+            "username": "john",
+            "password": "johnpass",
+            "role": "user",
+            "wallet_balance": 75
+        },
+        {
+            "username": "eve",
+            "password": "evilpass",
+            "role": "user",
+            "wallet_balance": 30
+        }
+    ],
+    "articles": [
+        {
+            "title": "How to Start Mobile Application Security Testing",
+            "content": "Mobile application security testing is a key skill in the IT security world, especially nowadays when smartphones are used everywhere. To begin, it’s useful to understand the main differences between web and mobile applications. Mobile apps have local components such as SQLite databases, SharedPreferences files, and OS-dependent permission systems.\n\n**Getting started steps:**\n\n1. **Prepare the environment:** Install an emulator (e.g., AVD from Android Studio) or use a physical rooted device. Tools like `adb`, `Frida`, `Burp Suite`, `MobSF`, and `APKTool` will also be useful.\n\n2. **Static analysis:** Unpack the application (`.apk`) and inspect the code structure. Check the manifest, requested permissions, exported components, and third-party libraries.\n\n3. **Dynamic analysis:** Observe the app’s runtime behavior. Intercept network traffic, test reactions to parameter manipulation, and modify the runtime environment.\n\n4. **Basic attack vectors:**\n   - Improper data storage\n   - Lack of secure network communication (e.g., missing HTTPS, no certificate pinning)\n   - Insecure app components (deeplinks, activities, broadcasts)\n\n5. **Use OWASP MASVS and MSTG:** These are official guidelines and manuals for mobile app security testing. Use them as a checklist.\n\nWhen starting out with mobile app testing, it’s valuable to practice on intentionally vulnerable environments like this VulnForum application. That’s the best way to develop skills in a safe setting.",
+            "is_paid": false
+        },
+        {
+            "title": "Exploiting XSS Using Vulnerable Applications as Examples",
+            "content": "Cross-Site Scripting (XSS) is one of the most common vulnerabilities in web applications and in mobile apps that use WebView or dynamic HTML. In this article we will analyze how XSS works, its types, and how it can be exploited using vulnerable applications like VulnForum as examples.\n\n**Types of XSS:**\n\n1. **Stored XSS** – malicious code is saved to a database and executed each time a victim visits the infected page. This is ideal for attacks on forums and comment systems.\n\n2. **Reflected XSS** – JavaScript code is reflected in the server response, e.g., via a URL parameter. It typically requires the user to click a crafted link.\n\n3. **DOM-based XSS** – malicious code is injected without server involvement, solely by manipulating the client-side DOM.\n\n**Example with VulnForum:**\nIn the app a user can add a comment to an article. Lack of HTML filtering allows adding a payload like:\n\n`html\n<h1 style=\"color:red\">XSS works!</h1><script>alert('Pwned!')</script>\n`\n\nAfter saving the comment, this code will execute for anyone who reads it. This is a classic Stored XSS example.\n\n**XSS consequences:**\n- Stealing cookies / tokens\n- Session hijacking\n- Defacement (changing displayed content)\n- Automated actions (e.g., clicking buttons)\n\n**How to defend:**\n- Use proper HTML encoding (e.g., `&lt;`, `&gt;`, `&amp;`)\n- Validate and filter user input\n- Use libraries like DOMPurify to sanitize HTML\n\nExploiting XSS is not just about showing alert boxes. In practice it leads to account takeover, UI manipulation, and persistent injection of malicious scripts. Apps like VulnForum let you safely practice discovering and exploiting this vulnerability.",
+            "is_paid": true
+        },
+        {
+            "title": "Secure Data Storage on Android — Best Practices",
+            "content": "Local data storage is inevitable in mobile applications — it can be access tokens, user preferences, temporary files, or other sensitive information. Unfortunately, many apps do this insecurely, which facilitates reverse engineering, data theft, and privilege escalation.\n\n**Common mistakes:**\n- Storing passwords or tokens in `SharedPreferences` without encryption\n- Keeping data in internal storage without protections\n- Logging sensitive data (e.g., full API responses, JWTs, passwords)\n- Using external SD cards for storage without access control\n\n**Best practices:**\n\n1. **Use EncryptedSharedPreferences or EncryptedFile:**\n   Android Jetpack Security provides ready-made classes for encrypting app data. Keys are safely stored in the Android Keystore.\n\n2. **Avoid long-term tokens:**\n   If not necessary, prefer short-lived sessions or tokens refreshed dynamically from the backend.\n\n3. **Do not log sensitive data:**\n   Logs may be accessible to other apps (e.g., on rooted devices) or via `logcat`. Log only what is needed for debugging — never private data.\n\n4. **Use Internal Storage with restricted access:**\n   Data stored with the app’s private context (`MODE_PRIVATE`) is not accessible to other apps, even without root.\n\n5. **Consider using the Keystore API:**\n   Android Keystore allows creating and using cryptographic keys without exposing them to the application. For example, you can sign or decrypt data without direct access to the key material.\n\n**VulnForum vulnerability example:**\nIn VulnForum, credentials are stored in SharedPreferences in plaintext, making them an easy target for anyone with access to the app files.\n\nGood data storage is the foundation of mobile security. Even the best API security is meaningless if a token is stolen from the device storage.",
+            "is_paid": false
+        },
+        {
+            "title": "How to Break JWTs — Token Analysis and Weaknesses",
+            "content": "JSON Web Tokens (JWT) are a popular method for user authorization in web and mobile apps. Their signature-based structure seems secure — however, incorrect implementation can lead to serious security breaches.\n\n### 🔍 JWT Structure\nA JWT token consists of three dot-separated parts:\n\n```\nHEADER.PAYLOAD.SIGNATURE\n```\n\n- **Header** – contains the token type and signing algorithm (e.g., HS256)\n- **Payload** – user data (e.g., id, role, expiration)\n- **Signature** – an HMAC or RSA signature that ensures integrity\n\n### ⚠️ Common JWT weaknesses\n\n1. **No signature verification**\n   - The backend accepts tokens without checking the signature (often in test implementations)\n   - This allows payload tampering and privilege escalation (e.g., \\\"role\\\": \\\"admin\\\")\n\n2. **Using the \\\"none\\\" algorithm**\n   - Older libraries allowed `alg: none` in the header — meaning no signature. Some servers accepted such tokens!\n\n3. **Weak or known secret (HS256)**\n   - An HMAC-signed JWT can be brute-forced if the secret is too simple (e.g., \\\"12345\\\")\n   - Tools like `jwt-cracker` can quickly try common secrets\n\n4. **No rotation or token expiration**\n   - A token valid for days gives an attacker plenty of time if leaked\n   - Lack of refresh/revocation mechanisms leads to abuse\n\n5. **Too much data in the payload**\n   - Sensitive information in the payload is easy to read — JWT is base64-encoded, not encrypted\n\n### 🧪 Example from VulnForum\nIn VulnForum, the JWT is signed with HS256 using a very weak secret — easily crackable. After decoding you can:\n- Change \\\"role\\\": \\\"user\\\" to \\\"admin\\\"\n- Set the expiration far in the future\n- Send the token to the API and gain admin access\n\n### 🛡️ How to defend\n- Use strong, long secrets\n- Always validate the signature regardless of the header\n- Never use the \\\"none\\\" algorithm\n- Consider RSA/ECDSA JWTs if you can manage keys\n- Keep sensitive data on the server side, not in the JWT payload\n\nJWT is powerful — but only when used correctly.",
+            "is_paid": true
+        },
+        {
+            "title": "Reverse Engineering an APK Step by Step",
+            "content": "Reverse engineering Android applications allows you to analyze app behavior without access to source code. This skill is useful for both pentesters and security researchers.\n\n### 🔧 What you need\n\n- `apktool` – to decompile APK into smali format\n- `jadx` or `jeb` – to view reconstructed Java-like code\n- `Frida`, `Xposed`, `Objection` – for dynamic analysis\n- An emulator or a rooted/debug-enabled physical device\n\n### 📦 Step 1 – Decompile the APK\nStart by unpacking the APK:\n\n`bash\napktool d VulnForum.apk -o VulnForum_decoded\n`\n\nThe folder contents will show the app structure: layouts, AndroidManifest, smali.\n\n### 🔍 Step 2 – Static analysis\nUse `jadx-gui` to browse the reconstructed Java code:\n\n`bash\njadx-gui VulnForum.apk\n`\n\nLook for:\n- Hardcoded tokens / API keys\n- Improper encryption\n- Exported activities (`exported=\"true\"` in the manifest)\n\n### 🧪 Step 3 – Dynamic analysis\nInstall the app on an emulator and connect Frida:\n\n`bash\nfrida-ps -U | grep VulnForum\n`\n\nYou can hook functions, monitor login methods, decode JWTs, etc. Example:\n\n`javascript\nJava.perform(() => {\n  const AuthClass = Java.use(\"com.vulnforum.auth.AuthUtils\");\n  AuthClass.verifyToken.implementation = function(token) {\n    console.log(\"Intercepted token:\", token);\n    return this.verifyToken(token);\n  };\n});\n`\n\n### 💡 Practical goals in VulnForum\n- Locate encryption routines and try to decrypt data\n- Identify payment validation functions and attempt to modify them\n- Find hidden/deeplinked activities and launch them manually\n\n### 🛡️ Security tips\n- Avoid hardcoded secrets\n- Use proguard/obfuscation\n- Apply layered security — never trust the client\n\nReverse engineering is a fundamental offensive tool and a great way to test the quality of your own app.",
+            "is_paid": false
+        },
+        {
+            "title": "Deeplink Attacks and User Data Takeover",
+            "content": "Deeplinks let mobile apps respond to specially crafted URLs (e.g., `vulnforum://article/5`). While useful, improper configuration can lead to serious security breaches.\n\n### 🚨 Deeplink-related threats\n\n1. **Unauthorized access to features** – if a deeplink opens a sensitive screen without verifying session/authentication.\n2. **Intent hijacking** – another malicious app can intercept the deeplink if the app doesn’t define intent filters correctly or uses `android:exported=\"false\"` incorrectly.\n3. **Parameter injection via URL** – some apps inject deeplink parameters without filtering (e.g., into WebView or SQL queries).\n\n### 🔧 Vulnerability in practice\nConsider this deeplink:\n\n`\nvulnforum://message/send?to=bob&text=hello\n`\n\nIf the app:\n- doesn’t verify who is sending the message,\n- doesn’t restrict who can use that deeplink,\n\n...then any other app could call that link and send a message on behalf of the user.\n\n### 🧪 Testing the vulnerability\n\nIn Android Studio you can test a deeplink with:\n`bash\nadb shell am start -a android.intent.action.VIEW -d \"vulnforum://article/2\"\n`\n\nYou can also build a small app that opens vulnerable links to VulnForum.\n\n### 🛡️ Best practices\n\n- **Validate authorization** – even if a deeplink opens an activity, enforce authentication in code.\n- **Set `android:exported=\"false\"` where appropriate** – this limits access to internal components.\n- **Use `intent-filter` carefully** – only where necessary.\n- **Filter input data** – never trust deeplink parameters.\n\n### 💥 VulnForum and deeplinks\nVulnForum contains activities vulnerable to deeplink attacks. Try to:\n- Send a message with another user’s permissions\n- Access paid content without payment\n- Bypass login screens\n\nDeeplink attacks are a great starting point for exploit chains, especially combined with other flaws like missing authorization or weak authentication.",
+            "is_paid": true
+        }
+    ],
+    "unlocked_articles": [
+        {
+            "username": "alice",
+            "article_title": "How to Break JWT — Token Analysis and Weaknesses"
+        },
+        {
+            "username": "alice",
+            "article_title": "Reverse Engineering an APK Step by Step"
+        },
+        {
+            "username": "bob",
+            "article_title": "Deeplink Attacks and User Data Takeover"
+        },
+        {
+            "username": "john",
+            "article_title": "Reverse Engineering an APK Step by Step"
+        },
+        {
+            "username": "john",
+            "article_title": "Attacking Mobile Apps via Logs and Debug Output"
+        },
+        {
+            "username": "john",
+            "article_title": "Network Traffic Analysis in Mobile Applications"
+        },
+        {
+            "username": "eve",
+            "article_title": "Deeplink Attacks and User Data Takeover"
+        },
+        {
+            "username": "eve",
+            "article_title": "Session Management and Token Security"
+        },
+        {
+            "username": "eve",
+            "article_title": "Protecting User Privacy in Mobile Applications"
+        }
+    ],
+    "messages": [
+        {
+            "sender": "alice",
+            "receiver": "bob",
+            "content": "Hi Bob!"
+        },
+        {
+            "sender": "john",
+            "receiver": "alice",
+            "content": "Do you have a moment for a question?"
+        },
+        {
+            "sender": "eve",
+            "receiver": "john",
+            "content": "Check out this article!"
+        }
+    ],
+    "comments": [
+        {
+            "text": "Great article! A perfect starting point for beginners.",
+            "file_path": null,
+            "article_title": "How to Start Mobile Application Security Testing"
+        },
+        {
+            "text": "I disagree with this attack method — there are better approaches.",
+            "file_path": null,
+            "article_title": "How to Break JWT — Token Analysis and Weaknesses"
+        },
+        {
+            "text": "More sources please, especially regarding deeplink abuses.",
+            "file_path": null,
+            "article_title": "Deeplink Attacks and User Data Takeover"
+        },
+        {
+            "text": "A bit boring. Maybe add code examples?",
+            "file_path": null,
+            "article_title": "Secure Data Storage on Android — Best Practices"
+        },
+        {
+            "text": "Well written! Reverse engineering finally makes sense.",
+            "file_path": null,
+            "article_title": "Reverse Engineering an APK Step by Step"
+        },
+        {
+            "text": "Thanks for the info! Please share more XSS materials.",
+            "file_path": null,
+            "article_title": "Exploiting XSS Using Vulnerable Applications as Examples"
+        }
+    ]
 }

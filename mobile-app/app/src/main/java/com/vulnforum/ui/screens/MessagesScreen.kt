@@ -53,18 +53,18 @@ fun MessagesScreen(navController: NavController, onComposeClick: () -> Unit) {
         }
 
         Scaffold(
-            containerColor = Color.Transparent, // <- to jest kluczowe
+            containerColor = Color.Transparent, // <- this is key
             topBar = {
                 TopAppBar(
                     title = {
                         Text(
-                            text = "Wiadomości",
+                            text = "Messages",
                             style = MaterialTheme.typography.headlineSmall
                         )
                     },
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = "Wróć")
+                            Icon(Icons.Default.ArrowBack, contentDescription = "Go back")
                         }
                     }
                 )
@@ -76,7 +76,7 @@ fun MessagesScreen(navController: NavController, onComposeClick: () -> Unit) {
                 ) {
                     Icon(
                         Icons.Default.Add,
-                        contentDescription = "Nowa wiadomość",
+                        contentDescription = "New message",
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
@@ -105,6 +105,7 @@ fun MessagesScreen(navController: NavController, onComposeClick: () -> Unit) {
         }
     }
 }
+
 @Composable
 fun MessageItem(message: Message, expanded: Boolean, onClick: () -> Unit) {
     Card(
@@ -141,7 +142,7 @@ fun MessageItem(message: Message, expanded: Boolean, onClick: () -> Unit) {
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Od: ${message.sender}",
+                        text = "From: ${message.sender}",
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -153,7 +154,7 @@ fun MessageItem(message: Message, expanded: Boolean, onClick: () -> Unit) {
                 }
                 Icon(
                     imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                    contentDescription = if (expanded) "Zwiń wiadomość" else "Rozwiń wiadomość",
+                    contentDescription = if (expanded) "Collapse message" else "Expand message",
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
@@ -178,6 +179,3 @@ fun MessageItem(message: Message, expanded: Boolean, onClick: () -> Unit) {
         }
     }
 }
-
-
-
