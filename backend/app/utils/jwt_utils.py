@@ -8,7 +8,7 @@ def generate_token(user):
         "sub": str(user["id"]),   
         "username": user["username"],
         "role": user["role"],
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=2)
+        "exp": datetime.datetime.utcnow() + datetime.timedelta(days=1)
     }
     token = jwt.encode(payload, SECRET, algorithm="HS256")
 
