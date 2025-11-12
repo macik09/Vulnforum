@@ -41,13 +41,13 @@
 
 *Manipulate Price and "Purchase" the Article:*
 
-<img src="../assets/8488b955b9e1d5fcefd74314490c3257.png" alt="8488b955b9e1d5fcefd74314490c3257.png" width="891" height="312" class="jop-noMdConv">
+<img src="assets/8488b955b9e1d5fcefd74314490c3257.png" alt="8488b955b9e1d5fcefd74314490c3257.png" width="891" height="312" class="jop-noMdConv">
 
 *Capture the Key*
 
 *Ensure the request includes the compromised **`x-access-key`** in the header or body. The server accepts this key as valid proof of premium access for all subsequent requests, granting unauthorized access to all premium content*
 
-![e58102258096a6229f6dbedc73eaf4ce.png](../assets/e58102258096a6229f6dbedc73eaf4ce.png)
+![e58102258096a6229f6dbedc73eaf4ce.png](assets/e58102258096a6229f6dbedc73eaf4ce.png)
 
 # 🛡️ Elevate privileges to Administrator status.
 
@@ -85,9 +85,9 @@ attacker', 'password', 'admin', 100) /*
 
 This payload effectively changes the SQL query from inserting a standard user to inserting a user with the hardcoded role of `admin`. After execution, the attacker is able to log in with administrative privileges.
 
-![d72d8664aa73b0d303bf9aeec2964a7a.png](../assets/d72d8664aa73b0d303bf9aeec2964a7a.png)
+![d72d8664aa73b0d303bf9aeec2964a7a.png](/assets/d72d8664aa73b0d303bf9aeec2964a7a.png)
 
-<img src="../assets/389b2f35e7c08a2a0cc445e242360754.png" alt="389b2f35e7c08a2a0cc445e242360754.png" width="503" height="970">
+<img src="assets/389b2f35e7c08a2a0cc445e242360754.png" alt="389b2f35e7c08a2a0cc445e242360754.png" width="503" height="970">
 
 &nbsp;
 
@@ -121,7 +121,7 @@ This payload effectively changes the SQL query from inserting a standard user to
 
 `adb shell am start -a android.intent.action.VIEW -d "vulnforum://addFunds?amount=100000" com.vulnforum`
 
-<img src="../assets/718b03d41e33d1fb85feda4d40f50113.png" alt="718b03d41e33d1fb85feda4d40f50113.png" width="453" height="947">
+<img src="/assets/718b03d41e33d1fb85feda4d40f50113.png" alt="718b03d41e33d1fb85feda4d40f50113.png" width="453" height="947">
 
 # 🕵️‍♂️ Read or intercept other users authentication tokens.
 
@@ -158,12 +158,12 @@ This payload effectively changes the SQL query from inserting a standard user to
 
 *Creating a comment*
 
-![28905b8670e725b725819c69e2e382d7.png](../assets/28905b8670e725b725819c69e2e382d7.png)
+![28905b8670e725b725819c69e2e382d7.png](assets/28905b8670e725b725819c69e2e382d7.png)
 
 *Another user checks the comments*
 
-![e468a8b4bbcb9c45e313ec5a860b530d.png](../assets/e468a8b4bbcb9c45e313ec5a860b530d.png)
+![e468a8b4bbcb9c45e313ec5a860b530d.png](assets/e468a8b4bbcb9c45e313ec5a860b530d.png)
 
 *publishing token via stored xss*
 
-![28b777b04581b5a75c2640cd55c08062.png](../assets/28b777b04581b5a75c2640cd55c08062.png)
+![28b777b04581b5a75c2640cd55c08062.png](assets/28b777b04581b5a75c2640cd55c08062.png)
