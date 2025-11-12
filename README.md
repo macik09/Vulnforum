@@ -72,7 +72,7 @@ These goals can guide your security testing process:
 -     ✉️ Send a message on behalf of another user (Impersonation).
 -     🛡️ Elevate privileges to Administrator status.
 -     💰 Increase the wallet balance to 100,000 (Business Logic Flaw).
--     🕵️‍♂️ Read or intercept other users' authentication tokens.
+-     🕵️‍♂️ Read or intercept other users authentication tokens.
 
 
 
